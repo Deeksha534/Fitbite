@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - FitBite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #d2a679;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signup-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 380px;
+      text-align: center;
+    }
+
+    .signup-container h2 {
+      color: #4e342e;
+      margin-bottom: 25px;
+    }
+
+    /* Target inputs using type for consistency */
+    .signup-container input[type="text"],
+    .signup-container input[type="email"],
+    .signup-container input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #b5835a;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .signup-container button {
+      width: 95%;
+      padding: 12px;
+      background-color: #4e342e;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.3s ease;
+    }
+
+    .signup-container button:hover {
+      background-color: #b5835a;
+    }
+
+    .signup-container p {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .signup-container a {
+      color: #4e342e;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .signup-container a:hover {
+      color: #b5835a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="signup-container">
+    <h2><i class="fa fa-user-plus"></i> Create Account</h2>
+    
+    <form id="signup-form">
+      <input type="text" placeholder="Full Name" id="fullName" required><br>
+      <input type="email" placeholder="Email Address" id="email" required><br>
+      <input type="password" placeholder="Password" id="password" required><br>
+      <input type="password" placeholder="Confirm Password" id="confirmPassword" required><br>
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <p><a href="index.html"><i class="fa fa-arrow-left"></i> Back to Home</a></p>
+  </div>
+
+  <script type="module" src="./supabaseClient.js"></script>
+
+  <script type="module">
+    import { supabase } from './supabaseClient.js';
+
+    const form = document.getElementById('signup-form');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const fullName = document.getElementById('fullName').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if(password !== confirmPassword){
+          alert("Passwords do not match!");
+          return;
+      }
+
+      // 🎯 Supabase Signup Call
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: { full_name: fullName } // Optional: Save other data like Full Name
+        }
+      });
+
+      if (error) {
+        alert(`Signup Error: ${error.message}`);
+      } else {
+        alert('✅ Account created successfully! Please log in.');
+        window.location.href = 'login.html'; // Redirect to login page
+      }
+    });
+  </script>
+
+</body>
+</html>

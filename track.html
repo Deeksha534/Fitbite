@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Tracking - FitBite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #d2a679;
+      color: #111;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .track-box {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 450px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #4e342e;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 1.1rem;
+    }
+
+    .progress {
+      margin-top: 20px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 20px;
+      width: 0%;
+      background: #4e342e;
+      transition: width 1.5s ease;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      background: #4e342e;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #b5835a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="track-box">
+    <h2>Order Tracking</h2>
+    <div id="tracking-content" class="status">Loading...</div>
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+  </div>
+
+  <script type="module" src="./supabaseClient.js"></script>
+  
+  <script>
+    // Retrieve order info from localStorage
+    const order = JSON.parse(localStorage.getItem('order'));
+
+    const content = document.getElementById('tracking-content');
+    const progressBar = document.getElementById('progress-bar');
+
+    if (!order) {
+      content.innerHTML = "🚫 No orders to track.";
+      document.querySelector('.progress').style.display = 'none';
+    } else {
+      content.innerHTML = `📦 <strong>${order.name}</strong> — ${order.status}`;
+      setTimeout(() => { progressBar.style.width = order.progress + '%'; }, 500);
+    }
+    
+    // 💡 TO DO: Once connected to Supabase, this script would check the logged-in user's ID
+    // and query the 'orders' table to show their actual past orders instead of using localStorage.
+  </script>
+
+</body>
+</html>

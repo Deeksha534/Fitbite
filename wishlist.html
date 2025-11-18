@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishlist - FitBite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    /* ... (Your existing CSS here) ... */
+    /* Add a style for the login placeholder if needed */
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo-section">
+      <img src="images/logo.jpeg" alt="FitBite Logo">
+      <span>FitBite</span>
+    </a>
+    <div class="header-icons">
+      <a href="wishlist.html"><i class="fas fa-heart"></i></a>
+      <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div id="auth-check-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
+        Checking session...
+    </div>
+
+    <div id="wishlist-content" class="hidden">
+      <h1> Your Wishlist</h1>
+
+      <div id="wishlist-container">
+        </div>
+
+      <div id="empty-message" class="hidden">
+        <i class="far fa-heart"></i>
+        <h2>Your Wishlist is Empty</h2>
+        <p>Add some FitBite favourites to your wishlist and come back later!</p>
+        <a href="index.html#flavours" class="browse-btn">Browse Products</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 FitBite. All rights reserved.
+  </footer>
+
+  <script type="module" src="./supabaseClient.js"></script>
+
+  <script type="module">
+    import { supabase } from './supabaseClient.js';
+
+    const mainContent = document.getElementById('main-content');
+    const authMessage = document.getElementById('auth-check-message');
+    const wishlistContent = document.getElementById('wishlist-content');
+    const wishlistContainer = document.getElementById("wishlist-container");
+    const emptyMessage = document.getElementById("empty-message");
+
+    let wishlist = [];
+
+    // --- Page Protection ---
+    async function checkSessionAndRender() {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        authMessage.style.display = 'none';
+
+        if (!user) {
+            // User is NOT logged in: Block access and redirect
+            mainContent.innerHTML = `
+                <div style="text-align:center; padding: 50px;">
+                    <i class="fas fa-lock" style="font-size: 4rem; color: #b5835a; margin-bottom: 20px;"></i>
+                    <h3>Login Required to View Wishlist</h3>
+                    <p>Please log in to see your saved items.</p>
+                    <a href="login.html" class="browse-btn" style="display:inline-block; margin-top:20px;">
+                        Go to Login
+                    </a>
+                </div>
+            `;
+        } else {
+            // User is logged in: Proceed to render wishlist (Your existing code)
+            wishlistContent.classList.remove("hidden");
+            // 💡 TO DO: In a real app, you would now load wishlist data from the Supabase Database for this 'user'
+            loadLocalWishlist(); 
+            renderWishlist();
+        }
+    }
+
+    // --- Existing Wishlist Functions (Modified to be internal) ---
+    function loadLocalWishlist() {
+      try {
+        const stored = localStorage.getItem("wishlist");
+        if (stored) {
+          wishlist = JSON.parse(stored);
+        }
+      } catch (e) {
+        wishlist = [
+          { name: "Chocolate Protein Bar", price: "149", image: "https://images.unsplash.com/photo-1604480133435-25b9184b6c24?w=400" },
+          { name: "Peanut Butter Delight", price: "179", image: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400" }
+        ];
+      }
+    }
+
+    window.renderWishlist = function() {
+      wishlistContainer.innerHTML = '';
+
+      if (wishlist.length === 0) {
+        emptyMessage.classList.remove("hidden");
+      } else {
+        emptyMessage.classList.add("hidden");
+
+        wishlist.forEach((item, index) => {
+          const card = document.createElement("div");
+          card.className = "wishlist-card";
+
+          card.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <div class="card-content">
+              <h3>${item.name}</h3>
+              <p>₹${item.price}</p>
+              <button onclick="removeItem(${index})" class="remove-btn">
+                <i class="fas fa-trash-alt"></i> Remove
+              </button>
+            </div>
+          `;
+          wishlistContainer.appendChild(card);
+        });
+      }
+    }
+
+    window.removeItem = function(index) {
+      wishlist.splice(index, 1);
+      try {
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      } catch (e) {
+        // Continue without localStorage
+      }
+      renderWishlist();
+    }
+
+    // Start the authentication check process
+    checkSessionAndRender();
+  </script>
+
+</body>
+</html>

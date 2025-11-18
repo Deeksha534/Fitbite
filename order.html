@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - FitBite</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  /* ... (Your existing CSS here) ... */
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #d2a679;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .checkout-box {
+    background: rgba(255,255,255,0.95);
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  h2 {
+    color: #4e342e;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* ... (Rest of your CSS styles) ... */
+
+</style>
+</head>
+<body>
+
+<div class="checkout-box" id="checkout-box">
+  <div id="auth-check-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
+      Checking session...
+  </div>
+  
+  <div id="checkout-content" style="display:none;">
+    <h2>Checkout</h2>
+
+    <div class="cart-summary" id="cart-summary">
+      Loading cart summary...
+    </div>
+
+    <form id="checkout-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required placeholder="Your Name">
+
+      <label for="address">Delivery Address</label>
+      <textarea id="address" rows="3" required placeholder="Street, City, State, Pincode"></textarea>
+
+      <label for="contact">Contact Number</label>
+      <input type="text" id="contact" required placeholder="e.g., +91 9876543210">
+
+      <label for="payment">Payment Method</label>
+      <select id="payment" required>
+        <option value="">Select Payment</option>
+        <option value="cod">Cash on Delivery</option>
+        <option value="card">Credit / Debit Card</option>
+        <option value="upi">UPI / Wallet</option>
+      </select>
+
+      <button type="submit" class="submit-btn">Place Order</button>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="./supabaseClient.js"></script>
+
+<script type="module">
+  import { supabase } from './supabaseClient.js';
+  
+  const checkoutBox = document.getElementById('checkout-box');
+  const authMessage = document.getElementById('auth-check-message');
+  const checkoutContent = document.getElementById('checkout-content');
+  
+  async function checkSessionAndRender() {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      authMessage.style.display = 'none';
+
+      if (!user) {
+          // User is NOT logged in: Block access and display message
+          checkoutBox.innerHTML = `
+              <div style="text-align:center; padding: 50px;">
+                  <i class="fas fa-lock" style="font-size: 4rem; color: #b5835a; margin-bottom: 20px;"></i>
+                  <h3>Login Required to Checkout</h3>
+                  <p>Please log in to finalize your order.</p>
+                  <a href="login.html" class="submit-btn" style="display:inline-block; margin-top:20px;">
+                      Go to Login
+                  </a>
+              </div>
+          `;
+      } else {
+          // User is logged in: Show the checkout form
+          checkoutContent.style.display = 'block';
+          renderCheckout(); // Call your existing function to load cart/summary
+      }
+  }
+
+  // --- Existing Checkout Logic (Encapsulated in a function) ---
+  function renderCheckout() {
+      // Load cart data
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartSummary = document.getElementById('cart-summary');
+      let total = 0;
+
+      if(cart.length === 0){
+        cartSummary.innerHTML = "<p>🛒 Your cart is empty. <a href='index.html'>Start Shopping</a></p>";
+      } else {
+        let summaryHTML = '';
+        cart.forEach(item => {
+          const itemTotal = item.price * item.quantity;
+          total += itemTotal;
+          summaryHTML += `
+            <div class="cart-item">
+              <div style="display:flex; align-items:center;">
+                <img src="${item.img || 'images/default.jpg'}" alt="${item.name}">
+                <span>${item.name} x${item.quantity}</span>
+              </div>
+              <span>₹${itemTotal}</span>
+            </div>`;
+        });
+        summaryHTML += `<div class="total">Total: ₹${total}</div>`;
+        cartSummary.innerHTML = summaryHTML;
+      }
+
+      // Handle form submission
+      const form = document.getElementById('checkout-form');
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        if(cart.length === 0){
+          alert("Your cart is empty!");
+          return;
+        }
+
+        const user = (await supabase.auth.getUser()).data.user; // Get the current user again
+
+        const order = {
+          user_id: user.id, // 💡 NEW: Associate order with user
+          name: document.getElementById('name').value,
+          address: document.getElementById('address').value,
+          contact: document.getElementById('contact').value,
+          payment: document.getElementById('payment').value,
+          items: cart,
+          total: total
+        };
+
+        // 💡 TO DO: Here, you would send the 'order' object to the Supabase Database ('orders' table)
+
+        alert("✅ Order placed successfully! Thank you for shopping with FitBite.");
+        localStorage.removeItem('cart');
+        window.location.href = "index.html";
+      });
+  }
+
+  // Start the authentication check process
+  checkSessionAndRender();
+</script>
+
+</body>
+</html>
