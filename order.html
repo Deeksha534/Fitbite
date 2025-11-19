@@ -93,7 +93,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: background 0.3s ease;
   }
 
   .submit-btn:hover {
@@ -134,6 +134,31 @@
 
   .hidden {
       display: none;
+  }
+  
+  /* 🎯 MOBILE RESPONSIVENESS FIXES */
+  @media (max-width: 768px) {
+      .checkout-box {
+          padding: 20px;
+      }
+      
+      .cart-summary {
+          padding: 10px;
+      }
+      
+      .cart-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+      }
+      
+      .cart-item span {
+          text-align: left;
+      }
+      
+      .total {
+          text-align: center;
+      }
   }
 
 </style>
@@ -221,14 +246,12 @@
       let total = 0;
 
       if(cart.length === 0){
-        // If cart is empty, redirect user back or show empty message
         cartSummary.innerHTML = "<p>🛒 Your cart is empty. <a href='index.html'>Start Shopping</a></p>";
       } else {
         let summaryHTML = '';
         cart.forEach(item => {
           const itemTotal = item.price * item.quantity;
           total += itemTotal;
-          // IMPORTANT: Assuming you have cart item images for the full style
           summaryHTML += `
             <div class="cart-item">
               <div style="display:flex; align-items:center;">
