@@ -150,6 +150,35 @@
       margin-top: 40px;
     }
 
+    /* 🎯 MOBILE RESPONSIVENESS FIXES */
+    @media (max-width: 768px) {
+        .product-page {
+            flex-direction: column; /* Stack image and info vertically */
+            padding: 20px;
+            margin: 20px auto;
+        }
+
+        .product-page img {
+            width: 100%; /* Image takes full width */
+            max-width: 400px;
+            margin: 0 0 20px 0;
+        }
+
+        .product-info {
+            padding: 10px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .buttons button {
+            width: 100%;
+            margin-right: 0;
+        }
+    }
   </style>
 </head>
 <body>
