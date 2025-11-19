@@ -6,8 +6,203 @@
   <title>Wishlist - FitBite</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
-    /* ... (Your existing CSS here) ... */
-    /* Add a style for the login placeholder if needed */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #d2a679;
+      color: #111;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .logo-section img {
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 50%;
+    }
+
+    .logo-section span {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #4e342e;
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .header-icons a {
+      color: #4e342e;
+      font-size: 1.3rem;
+      transition: color 0.3s ease;
+    }
+
+    .header-icons a:hover {
+      color: #b5835a;
+    }
+
+    /* Main Container Wrapper */
+    #main-content-wrapper {
+        flex-grow: 1;
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4e342e;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+    }
+
+    /* Wishlist Grid */
+    #wishlist-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .wishlist-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .wishlist-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .wishlist-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card-content h3 {
+      color: #4e342e;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .card-content p {
+      color: #666;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    .remove-btn {
+      width: 100%;
+      background: #4e342e;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      background: #d32f2f;
+    }
+
+    /* Empty Wishlist & Login Required Messages Share this Style */
+    #empty-message, #login-required-message > div {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 60px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    #empty-message i, #login-required-message i {
+      font-size: 4rem;
+      color: #b5835a;
+      margin-bottom: 20px;
+    }
+
+    #empty-message h2, #login-required-message h2 {
+      color: #4e342e;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    #empty-message p, #login-required-message p {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .browse-btn {
+      display: inline-block;
+      background: #4e342e;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .browse-btn:hover {
+      background: #b5835a;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(78, 52, 46, 0.95);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      #wishlist-container {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -23,26 +218,32 @@
     </div>
   </header>
 
-  <main id="main-content">
-    <div id="auth-check-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
-        Checking session...
-    </div>
+  <div id="main-content-wrapper">
+      <main>
+          <div id="auth-check-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
+              Checking session...
+          </div>
+          
+          <div id="login-required-message" class="hidden">
+              </div>
 
-    <div id="wishlist-content" class="hidden">
-      <h1> Your Wishlist</h1>
+          <div id="wishlist-content-original" class="hidden">
+              <h1> Your Wishlist</h1>
 
-      <div id="wishlist-container">
-        </div>
+              <div id="wishlist-container">
+                  </div>
 
-      <div id="empty-message" class="hidden">
-        <i class="far fa-heart"></i>
-        <h2>Your Wishlist is Empty</h2>
-        <p>Add some FitBite favourites to your wishlist and come back later!</p>
-        <a href="index.html#flavours" class="browse-btn">Browse Products</a>
-      </div>
-    </div>
-  </main>
-
+              <div id="empty-message" class="hidden">
+                  <i class="far fa-heart"></i>
+                  <h2>Your Wishlist is Empty</h2>
+                  <p>Add some FitBite favourites to your wishlist and come back later!</p>
+                  <a href="index.html#flavours" class="browse-btn">Browse Products</a>
+              </div>
+          </div>
+          
+      </main>
+  </div>
+  
   <footer>
     &copy; 2025 FitBite. All rights reserved.
   </footer>
@@ -52,42 +253,15 @@
   <script type="module">
     import { supabase } from './supabaseClient.js';
 
-    const mainContent = document.getElementById('main-content');
     const authMessage = document.getElementById('auth-check-message');
-    const wishlistContent = document.getElementById('wishlist-content');
+    const wishlistOriginal = document.getElementById('wishlist-content-original');
+    const loginRequired = document.getElementById('login-required-message');
     const wishlistContainer = document.getElementById("wishlist-container");
     const emptyMessage = document.getElementById("empty-message");
 
     let wishlist = [];
-
-    // --- Page Protection ---
-    async function checkSessionAndRender() {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        authMessage.style.display = 'none';
-
-        if (!user) {
-            // User is NOT logged in: Block access and redirect
-            mainContent.innerHTML = `
-                <div style="text-align:center; padding: 50px;">
-                    <i class="fas fa-lock" style="font-size: 4rem; color: #b5835a; margin-bottom: 20px;"></i>
-                    <h3>Login Required to View Wishlist</h3>
-                    <p>Please log in to see your saved items.</p>
-                    <a href="login.html" class="browse-btn" style="display:inline-block; margin-top:20px;">
-                        Go to Login
-                    </a>
-                </div>
-            `;
-        } else {
-            // User is logged in: Proceed to render wishlist (Your existing code)
-            wishlistContent.classList.remove("hidden");
-            // 💡 TO DO: In a real app, you would now load wishlist data from the Supabase Database for this 'user'
-            loadLocalWishlist(); 
-            renderWishlist();
-        }
-    }
-
-    // --- Existing Wishlist Functions (Modified to be internal) ---
+    
+    // --- Helper Functions ---
     function loadLocalWishlist() {
       try {
         const stored = localStorage.getItem("wishlist");
@@ -95,13 +269,14 @@
           wishlist = JSON.parse(stored);
         }
       } catch (e) {
+        // Fallback or demo data if localStorage fails
         wishlist = [
-          { name: "Chocolate Protein Bar", price: "149", image: "https://images.unsplash.com/photo-1604480133435-25b9184b6c24?w=400" },
-          { name: "Peanut Butter Delight", price: "179", image: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400" }
+            { name: "Chocolate Protein Bar", price: "149", image: "https://images.unsplash.com/photo-1604480133435-25b9184b6c24?w=400" },
+            { name: "Peanut Butter Delight", price: "179", image: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400" }
         ];
       }
     }
-
+    
     window.renderWishlist = function() {
       wishlistContainer.innerHTML = '';
 
@@ -137,6 +312,34 @@
         // Continue without localStorage
       }
       renderWishlist();
+    }
+
+
+    // --- Page Protection ---
+    async function checkSessionAndRender() {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        authMessage.style.display = 'none'; // Hide loading message
+
+        if (!user) {
+            // User is NOT logged in: Show the Login Required message with styling
+            loginRequired.classList.remove('hidden');
+            loginRequired.innerHTML = `
+                <div>
+                    <i class="fas fa-lock"></i>
+                    <h2>Login Required to View Wishlist</h2>
+                    <p style="margin-bottom: 20px;">Please log in to see your saved items.</p>
+                    <a href="login.html" class="browse-btn">
+                        Go to Login
+                    </a>
+                </div>
+            `;
+        } else {
+            // User is logged in: Show the actual wishlist content
+            wishlistOriginal.classList.remove("hidden");
+            loadLocalWishlist(); 
+            renderWishlist();
+        }
     }
 
     // Start the authentication check process
