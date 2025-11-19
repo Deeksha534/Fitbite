@@ -6,7 +6,6 @@
 <title>Checkout - FitBite</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  /* ... (Your existing CSS here) ... */
   body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,7 +15,8 @@
     padding: 20px;
   }
 
-  .checkout-box {
+  /* Shared Box Style for Checkout and Login Message */
+  .checkout-box, .login-required-box {
     background: rgba(255,255,255,0.95);
     padding: 40px;
     border-radius: 12px;
@@ -36,19 +36,117 @@
     flex-direction: column;
     gap: 15px;
   }
+
+  label {
+    font-weight: bold;
+    color: #4e342e;
+  }
+
+  input, textarea, select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .cart-summary {
+    background: rgba(255,255,255,0.85);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .cart-item img {
+    height: 40px;
+    border-radius: 6px;
+    margin-right: 10px;
+  }
+
+  .cart-item span {
+    font-weight: bold;
+  }
+
+  .total {
+    text-align: right;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #b5835a;
+  }
+
+  .submit-btn {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #4e342e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #b5835a;
+  }
   
-  /* ... (Rest of your CSS styles) ... */
+  /* Login Required Styling */
+  .login-required-box {
+      text-align: center;
+  }
+  .login-required-box i {
+      font-size: 4rem;
+      color: #b5835a;
+      margin-bottom: 20px;
+  }
+  .login-required-box h3 {
+      color: #4e342e;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+  }
+  .login-required-box p {
+      color: #666;
+      margin-bottom: 25px;
+  }
+  .go-to-login-btn {
+      display: inline-block;
+      background: #4e342e;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      font-weight: bold;
+  }
+  .go-to-login-btn:hover {
+      background: #b5835a;
+  }
+
+  .hidden {
+      display: none;
+  }
 
 </style>
 </head>
 <body>
 
-<div class="checkout-box" id="checkout-box">
-  <div id="auth-check-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
+<div class="checkout-box" id="main-content-wrapper">
+  
+  <div id="loading-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
       Checking session...
   </div>
   
-  <div id="checkout-content" style="display:none;">
+  <div id="checkout-content" class="hidden">
     <h2>Checkout</h2>
 
     <div class="cart-summary" id="cart-summary">
@@ -83,30 +181,34 @@
 <script type="module">
   import { supabase } from './supabaseClient.js';
   
-  const checkoutBox = document.getElementById('checkout-box');
-  const authMessage = document.getElementById('auth-check-message');
+  const contentWrapper = document.getElementById('main-content-wrapper');
+  const loadingMessage = document.getElementById('loading-message');
   const checkoutContent = document.getElementById('checkout-content');
   
   async function checkSessionAndRender() {
+      // Show loading message initially
+      loadingMessage.classList.remove('hidden');
+      checkoutContent.classList.add('hidden');
+      
       const { data: { user } } = await supabase.auth.getUser();
 
-      authMessage.style.display = 'none';
+      loadingMessage.classList.add('hidden'); // Hide loading message
 
       if (!user) {
-          // User is NOT logged in: Block access and display message
-          checkoutBox.innerHTML = `
-              <div style="text-align:center; padding: 50px;">
-                  <i class="fas fa-lock" style="font-size: 4rem; color: #b5835a; margin-bottom: 20px;"></i>
+          // User is NOT logged in: Block access and display styled message
+          contentWrapper.innerHTML = `
+              <div class="login-required-box">
+                  <i class="fas fa-lock"></i>
                   <h3>Login Required to Checkout</h3>
-                  <p>Please log in to finalize your order.</p>
-                  <a href="login.html" class="submit-btn" style="display:inline-block; margin-top:20px;">
+                  <p>Please log in to finalize your order and delivery details.</p>
+                  <a href="login.html" class="go-to-login-btn">
                       Go to Login
                   </a>
               </div>
           `;
       } else {
           // User is logged in: Show the checkout form
-          checkoutContent.style.display = 'block';
+          checkoutContent.classList.remove('hidden');
           renderCheckout(); // Call your existing function to load cart/summary
       }
   }
@@ -119,16 +221,18 @@
       let total = 0;
 
       if(cart.length === 0){
+        // If cart is empty, redirect user back or show empty message
         cartSummary.innerHTML = "<p>🛒 Your cart is empty. <a href='index.html'>Start Shopping</a></p>";
       } else {
         let summaryHTML = '';
         cart.forEach(item => {
           const itemTotal = item.price * item.quantity;
           total += itemTotal;
+          // IMPORTANT: Assuming you have cart item images for the full style
           summaryHTML += `
             <div class="cart-item">
               <div style="display:flex; align-items:center;">
-                <img src="${item.img || 'images/default.jpg'}" alt="${item.name}">
+                <img src="${item.img || 'images/default.jpg'}" alt="${item.name}" style="height: 40px; margin-right: 10px;">
                 <span>${item.name} x${item.quantity}</span>
               </div>
               <span>₹${itemTotal}</span>
@@ -143,14 +247,15 @@
       form.addEventListener('submit', async function(e){
         e.preventDefault();
         if(cart.length === 0){
-          alert("Your cart is empty!");
+          alert("Your cart is empty! Please add products before checking out.");
           return;
         }
 
-        const user = (await supabase.auth.getUser()).data.user; // Get the current user again
+        // 💡 In a real app, you would fetch the user ID here
+        // const user = (await supabase.auth.getUser()).data.user;
 
         const order = {
-          user_id: user.id, // 💡 NEW: Associate order with user
+          // user_id: user.id, 
           name: document.getElementById('name').value,
           address: document.getElementById('address').value,
           contact: document.getElementById('contact').value,
@@ -159,7 +264,7 @@
           total: total
         };
 
-        // 💡 TO DO: Here, you would send the 'order' object to the Supabase Database ('orders' table)
+        // 💡 TO DO: Here, you would insert the 'order' object into the Supabase Database
 
         alert("✅ Order placed successfully! Thank you for shopping with FitBite.");
         localStorage.removeItem('cart');
