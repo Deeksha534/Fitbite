@@ -205,50 +205,50 @@
     }
 
     .hero-ad {
-  background: url('images/shop.jpeg') center/cover no-repeat; /* Add your background image */
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  color: white; /* Text color for contrast */
-}
+      background: url('images/shop.jpeg') center/cover no-repeat;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      color: white;
+    }
 
-.hero-ad::before {
-  content: "";
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 150px;
-  height: 150px;
-  background: rgba(0,0,0,0.3); /* optional overlay effect */
-  border-radius: 50%;
-}
+    .hero-ad::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 50%;
+    }
 
-.hero-ad h3 {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  color: #ffffff; /* make text visible over image */
-}
+    .hero-ad h3 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
 
-.hero-ad p {
-  color: #fff; 
-}
+    .hero-ad p {
+      color: #fff; 
+    }
 
-.hero-ad .offer-btn {
-  background: var(--color-primary);
-  color: white;
-  padding: 12px 25px;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: bold;
-  display: inline-block;
-  transition: all 0.3s ease;
-}
+    .hero-ad .offer-btn {
+      background: var(--color-primary);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
 
-.hero-ad .offer-btn:hover {
-  background: var(--color-primary-dark);
-}
+    .hero-ad .offer-btn:hover {
+      background: var(--color-primary-dark);
+    }
 
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
@@ -347,68 +347,67 @@
     }
 
     /* Product Cards */
-    /* Ensure product cards align perfectly */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  align-items: stretch; /* make all cards equal height */
-}
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      align-items: stretch;
+    }
 
-.product-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  position: relative;
-}
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+    }
 
-.product-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
+    .product-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
 
-.product-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex-grow: 1;
-  padding: 20px;
-}
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
+      padding: 20px;
+    }
 
-.product-info h3 {
-  font-size: 1.3rem;
-  color: var(--color-accent);
-  margin-bottom: 10px;
-}
+    .product-info h3 {
+      font-size: 1.3rem;
+      color: var(--color-accent);
+      margin-bottom: 10px;
+    }
 
-.product-info p {
-  font-size: 0.9rem;
-  color: #888;
-  margin-bottom: auto; /* keeps text flexible */
-}
+    .product-info p {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: auto;
+    }
 
-.product-btn {
-  background: var(--color-primary);
-  color: white;
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 15px;
-}
+    .product-btn {
+      background: var(--color-primary);
+      color: white;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
 
-.product-btn:hover {
-  background: var(--color-primary-dark);
-}
+    .product-btn:hover {
+      background: var(--color-primary-dark);
+    }
 
     .new-badge {
       position: absolute;
@@ -578,23 +577,81 @@
       opacity: 0.8;
     }
 
+    /* 🎯 MOBILE RESPONSIVENESS FIXES (New/Enhanced Media Query) */
     @media (max-width: 768px) {
+      
+      /* 1. Header/Top Bar Adjustments */
+      .top-bar {
+        flex-wrap: wrap; /* Allow items to wrap to the next line */
+        padding: 10px;
+      }
+
+      .logo {
+        flex-grow: 1; /* Pushes icons to the right */
+        order: 1;
+      }
+      
+      .top-icons {
+        order: 2; /* Keep icons visible beside logo */
+        gap: 15px;
+      }
+
+      .search-container {
+        order: 3; /* Push search bar to the next row */
+        width: 100%;
+        padding: 10px 0 0 0; /* Add padding below icons */
+      }
+      
+      .search-container input {
+        width: 100%; /* Make search bar full width */
+      }
+      
+      .suggestions {
+          width: 90%; /* Adjust suggestions box size */
+      }
+
+      /* 2. Hero Section Adjustments */
       .hero-content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Stack into a single column */
+        gap: 30px;
       }
 
       .hero-text h1 {
-        font-size: 2.5rem;
+        font-size: 3rem; /* Reduce font size for small screen */
       }
 
+      .hero-ad {
+          padding: 30px;
+      }
+
+      .hero-ad h3 {
+          font-size: 2rem;
+      }
+
+      /* 3. Navigation Adjustments */
+      nav {
+          top: auto; /* Allow nav to scroll off-screen */
+      }
+      nav a {
+          margin: 0 10px;
+          font-size: 1rem;
+      }
+
+      /* 4. Benefits Section Adjustments */
       .benefits-content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Stack into a single column */
       }
 
       .benefits-img {
-        order: -1;
+        order: -1; /* Put the image above the list for better flow */
+      }
+
+      /* 5. Footer Adjustments */
+      .footer-content {
+        grid-template-columns: 1fr;
       }
     }
+
   </style>
 </head>
 <body>
