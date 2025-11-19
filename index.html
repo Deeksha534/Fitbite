@@ -72,6 +72,14 @@
       padding: 0 20px;
     }
 
+    /* Styling for the new mobile search icon */
+    #mobileSearchIcon {
+      display: none; /* Hidden by default on desktop */
+      font-size: 1.3rem; 
+      color: var(--color-accent);
+      padding: 8px;
+    }
+
     .search-container input {
       width: 70%;
       max-width: 500px;
@@ -81,6 +89,7 @@
       outline: none;
       font-size: 1rem;
       background: #fff;
+      display: block; /* Default for desktop */
     }
 
     /* Suggestions */
@@ -577,7 +586,7 @@
       opacity: 0.8;
     }
 
-    /* 🎯 MOBILE RESPONSIVENESS FIXES (New/Enhanced Media Query) */
+    /* 🎯 MOBILE RESPONSIVENESS FIXES (Enhanced Media Query) */
     @media (max-width: 768px) {
       
       /* 1. Header/Top Bar Adjustments */
@@ -587,37 +596,53 @@
       }
 
       .logo {
-        flex-grow: 1; /* Pushes icons to the right */
+        flex-grow: 1; 
         order: 1;
       }
       
       .top-icons {
-        order: 2; /* Keep icons visible beside logo */
+        order: 3; /* Push icons to the end of the top row, but after the search icon */
         gap: 15px;
       }
-
+      
       .search-container {
-        order: 3; /* Push search bar to the next row */
-        width: 100%;
-        padding: 10px 0 0 0; /* Add padding below icons */
+        order: 2; /* Move search area (now just an icon) next to the logo */
+        width: auto;
+        flex: 0;
+        padding: 0 10px 0 0;
       }
       
+      /* Show the mobile icon */
+      #mobileSearchIcon {
+        display: block !important; 
+      }
+      
+      /* Hide the input box on mobile */
       .search-container input {
-        width: 100%; /* Make search bar full width */
+        display: none; 
+        /* When input is visible (via JS toggle), position it absolutely */
+        position: absolute;
+        top: 55px; /* Position below the top bar */
+        left: 10px;
+        width: calc(100% - 20px); /* Full width minus padding */
+        z-index: 10;
       }
-      
+
       .suggestions {
-          width: 90%; /* Adjust suggestions box size */
+        width: calc(100% - 20px);
+        top: 100px; /* Move suggestions below the expanded input */
+        left: 10px;
       }
+
 
       /* 2. Hero Section Adjustments */
       .hero-content {
-        grid-template-columns: 1fr; /* Stack into a single column */
+        grid-template-columns: 1fr; 
         gap: 30px;
       }
 
       .hero-text h1 {
-        font-size: 3rem; /* Reduce font size for small screen */
+        font-size: 3rem; 
       }
 
       .hero-ad {
@@ -630,20 +655,21 @@
 
       /* 3. Navigation Adjustments */
       nav {
-          top: auto; /* Allow nav to scroll off-screen */
+          top: auto; 
+          padding: 10px;
       }
       nav a {
-          margin: 0 10px;
-          font-size: 1rem;
+          margin: 0 8px;
+          font-size: 0.9rem;
       }
 
       /* 4. Benefits Section Adjustments */
       .benefits-content {
-        grid-template-columns: 1fr; /* Stack into a single column */
+        grid-template-columns: 1fr; 
       }
 
       .benefits-img {
-        order: -1; /* Put the image above the list for better flow */
+        order: -1; 
       }
 
       /* 5. Footer Adjustments */
@@ -662,7 +688,8 @@
       <span>FitBite</span>
     </div>
 
-    <div class="search-container">
+    <div class="search-container" id="searchContainer">
+      <a href="#" id="mobileSearchIcon" aria-label="Search"><i class="fa fa-search"></i></a> 
       <input type="text" id="search" placeholder="Search for products...">
       <div class="suggestions" id="suggestions"></div>
     </div>
@@ -912,17 +939,19 @@
     
     const authLink = document.getElementById('authLink');
     const logoutBtn = document.getElementById('logoutBtn');
+    
+    // --- NEW SEARCH TOGGLE ELEMENTS ---
+    const mobileSearchIcon = document.getElementById('mobileSearchIcon');
+    const searchInput = document.getElementById('search');
 
     // --- Authentication Check (Session) ---
     async function checkAuth() {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (user) {
-            // User is logged in
-            authLink.style.display = 'none'; // Hide login link
-            logoutBtn.style.display = 'block'; // Show logout button
+            authLink.style.display = 'none';
+            logoutBtn.style.display = 'block';
         } else {
-            // User is logged out
             authLink.href = 'login.html';
             logoutBtn.style.display = 'none';
         }
@@ -931,14 +960,28 @@
     // --- Logout Handler ---
     logoutBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        const { error } = await supabase.auth.signOut(); // 🎯 Supabase Logout Call
+        const { error } = await supabase.auth.signOut();
         if (error) {
             console.error('Logout Error:', error.message);
             alert("Logout failed. See console for details.");
         } else {
             alert('Logged out successfully!');
-            window.location.reload(); // Reload the page to update UI
+            window.location.reload();
         }
+    });
+    
+    // --- NEW Search Toggle Logic ---
+    mobileSearchIcon.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Toggle the visibility of the search input
+      if (searchInput.style.display === 'block') {
+        searchInput.style.display = 'none';
+        suggestions.style.display = 'none';
+      } else {
+        searchInput.style.display = 'block';
+        searchInput.focus();
+      }
     });
     
     // Run the check when the page loads
