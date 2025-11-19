@@ -299,13 +299,65 @@
         display: none;
     }
 
+    /* 🎯 MOBILE RESPONSIVENESS FIXES */
     @media (max-width: 768px) {
-      .cart-item {
-        grid-template-columns: 80px 1fr;
+      .container {
+          padding: 0;
+      }
+      
+      .cart-header {
+        flex-direction: column;
         gap: 15px;
+        text-align: center;
+        padding: 15px;
+      }
+      
+      .cart-header h2 {
+          font-size: 1.5rem;
+      }
+      
+      /* Item stacking on mobile */
+      .cart-item {
+        grid-template-columns: 80px 1fr; /* Image and details side-by-side */
+        gap: 15px;
+        padding: 15px;
       }
 
-      /* ... (rest of your media query styles) ... */
+      .item-image {
+        width: 80px;
+        height: 80px;
+      }
+
+      /* Total Price stacking */
+      .item-total {
+        grid-column: 1 / -1; /* Total price spans the full width */
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        border-top: 1px dashed #e0e0e0;
+        padding-top: 10px;
+      }
+
+      .item-total-price {
+          font-size: 1.3rem;
+      }
+      
+      .quantity-section {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+      }
+      
+      /* Checkout Actions stacking */
+      .actions {
+        flex-direction: column-reverse; 
+        gap: 10px;
+      }
+
+      .checkout-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -372,7 +424,6 @@
         }
     }
 
-
     // --- Existing Cart Functions (Placed here to ensure access) ---
     function getCartData() {
       try {
@@ -389,7 +440,7 @@
       } catch (e) {}
     }
 
-    window.renderCart = function() { // Made global for onclick handlers
+    window.renderCart = function() {
       const cart = getCartData();
       const cartContainer = document.getElementById('cart-content');
       const summaryContainer = document.getElementById('cart-summary');
@@ -420,7 +471,7 @@
 
         html += `
           <div class="cart-item">
-            <img src="${item.img}" alt="${item.name}" class="item-image">
+            <img src="${item.img || 'images/choco-almond.jpeg'}" alt="${item.name}" class="item-image">
             <div class="item-details">
               <h4>${item.name}</h4>
               <div class="item-price">₹${item.price} each</div>
