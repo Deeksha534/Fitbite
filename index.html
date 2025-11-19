@@ -594,7 +594,7 @@
       .top-bar {
         flex-wrap: wrap;
         padding: 10px;
-        height: 50px; /* Fix height for the top row elements */
+        height: 50px; /* Fixed height for the visible bar */
       }
 
       .logo {
@@ -624,9 +624,9 @@
         display: none; 
         /* When input is visible (via JS toggle), position it absolutely */
         position: absolute;
-        top: 50px; /* Position right under the fixed top bar */
-        left: 0; /* Align to the left edge of the screen */
-        width: 100%; /* Take full screen width for easy typing */
+        top: 50px; /* CRITICAL: Position right under the fixed top bar */
+        left: 0; 
+        width: 100%; 
         padding: 10px 15px; 
         border-radius: 0;
         z-index: 1000; /* CRITICAL: Ensure it overlays nav and hero */
@@ -979,33 +979,25 @@
         }
     });
     
-    // --- UPDATED Search Toggle Logic to handle visibility ---
+    // --- FINAL Search Toggle Logic: Only close when icon is clicked again ---
     mobileSearchIcon.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // Toggle the visibility
-      if (searchInput.style.display === 'block') {
-        searchInput.style.display = 'none';
-        suggestions.style.display = 'none';
-      } else {
-        searchInput.style.display = 'block';
-        searchInput.focus();
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+      if (isMobile) {
+        if (searchInput.style.display === 'block') {
+          // If visible, hide it on icon click
+          searchInput.style.display = 'none';
+          suggestions.style.display = 'none';
+        } else {
+          // If hidden, show it on icon click
+          searchInput.style.display = 'block';
+          searchInput.focus();
+        }
       }
     });
     
-    // --- OPTIONAL: Handle search bar visibility on window resize (e.g., rotating phone) ---
-    window.addEventListener('resize', () => {
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        if (!isMobile) {
-            // If we switch to desktop view, ensure the search bar is visible
-            searchInput.style.display = 'block';
-        } else {
-            // If we switch to mobile view, ensure the search bar is hidden by default
-            searchInput.style.display = 'none';
-        }
-    });
-
-
     // Run the check when the page loads
     checkAuth();
     
@@ -1050,9 +1042,11 @@
     });
 
     document.addEventListener('click', (e) => {
-      // Hide suggestions when clicking outside the search area
+      // Hiding suggestions when clicking outside the search area is still useful
       if(!document.querySelector('.search-container').contains(e.target)){
         suggestions.style.display = 'none';
+        
+        // IMPORTANT: We do NOT hide searchInput here. It remains visible until the icon is clicked again.
       }
     });
 
