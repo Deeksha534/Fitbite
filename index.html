@@ -74,7 +74,7 @@
 
     /* Styling for the new mobile search icon */
     #mobileSearchIcon {
-      display: none; /* Hidden by default on desktop */
+      display: none;
       font-size: 1.3rem; 
       color: var(--color-accent);
       padding: 8px;
@@ -90,7 +90,7 @@
       outline: none;
       font-size: 1rem;
       background: #fff;
-      display: block; /* Default for desktop */
+      display: block;
     }
 
     /* Suggestions */
@@ -594,6 +594,7 @@
       .top-bar {
         flex-wrap: wrap;
         padding: 10px;
+        height: 50px; /* Fix height for the top row elements */
       }
 
       .logo {
@@ -623,16 +624,23 @@
         display: none; 
         /* When input is visible (via JS toggle), position it absolutely */
         position: absolute;
-        top: 55px;
-        left: 10px;
-        width: calc(100% - 20px); 
-        z-index: 10;
+        top: 50px; /* Position right under the fixed top bar */
+        left: 0; /* Align to the left edge of the screen */
+        width: 100%; /* Take full screen width for easy typing */
+        padding: 10px 15px; 
+        border-radius: 0;
+        z-index: 1000; /* CRITICAL: Ensure it overlays nav and hero */
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
       }
 
       .suggestions {
-        width: calc(100% - 20px);
-        top: 100px;
-        left: 10px;
+        /* Align suggestions right below the expanded input */
+        width: 100%;
+        max-width: 100%;
+        top: 95px; /* Adjust slightly below the input field */
+        left: 0;
+        z-index: 999;
+        border-radius: 0;
       }
 
 
@@ -971,25 +979,33 @@
         }
     });
     
-    // --- 🎯 UPDATED Search Toggle Logic to handle visibility ---
+    // --- UPDATED Search Toggle Logic to handle visibility ---
     mobileSearchIcon.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // Determine if the screen is mobile-sized (matching the CSS media query)
-      const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-      if (isMobile) {
-        // Toggle the visibility only if on a mobile screen
-        if (searchInput.style.display === 'block') {
-          searchInput.style.display = 'none';
-          suggestions.style.display = 'none';
-        } else {
-          searchInput.style.display = 'block';
-          searchInput.focus();
-        }
+      // Toggle the visibility
+      if (searchInput.style.display === 'block') {
+        searchInput.style.display = 'none';
+        suggestions.style.display = 'none';
+      } else {
+        searchInput.style.display = 'block';
+        searchInput.focus();
       }
     });
     
+    // --- OPTIONAL: Handle search bar visibility on window resize (e.g., rotating phone) ---
+    window.addEventListener('resize', () => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (!isMobile) {
+            // If we switch to desktop view, ensure the search bar is visible
+            searchInput.style.display = 'block';
+        } else {
+            // If we switch to mobile view, ensure the search bar is hidden by default
+            searchInput.style.display = 'none';
+        }
+    });
+
+
     // Run the check when the page loads
     checkAuth();
     
@@ -1034,15 +1050,9 @@
     });
 
     document.addEventListener('click', (e) => {
-      // Hide suggestions when clicking outside the search area, regardless of mobile view
+      // Hide suggestions when clicking outside the search area
       if(!document.querySelector('.search-container').contains(e.target)){
         suggestions.style.display = 'none';
-        
-        // 💡 OPTIONAL: Hide the input bar again if user clicks outside on mobile
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        if (isMobile && searchInput.style.display === 'block') {
-             // searchInput.style.display = 'none'; // Uncomment this line if you want the search bar to automatically disappear when clicking away on mobile.
-        }
       }
     });
 
