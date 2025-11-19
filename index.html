@@ -78,6 +78,7 @@
       font-size: 1.3rem; 
       color: var(--color-accent);
       padding: 8px;
+      cursor: pointer;
     }
 
     .search-container input {
@@ -591,7 +592,7 @@
       
       /* 1. Header/Top Bar Adjustments */
       .top-bar {
-        flex-wrap: wrap; /* Allow items to wrap to the next line */
+        flex-wrap: wrap;
         padding: 10px;
       }
 
@@ -601,12 +602,12 @@
       }
       
       .top-icons {
-        order: 3; /* Push icons to the end of the top row, but after the search icon */
+        order: 3;
         gap: 15px;
       }
       
       .search-container {
-        order: 2; /* Move search area (now just an icon) next to the logo */
+        order: 2;
         width: auto;
         flex: 0;
         padding: 0 10px 0 0;
@@ -617,20 +618,20 @@
         display: block !important; 
       }
       
-      /* Hide the input box on mobile */
+      /* Hide the input box on mobile by default */
       .search-container input {
         display: none; 
         /* When input is visible (via JS toggle), position it absolutely */
         position: absolute;
-        top: 55px; /* Position below the top bar */
+        top: 55px;
         left: 10px;
-        width: calc(100% - 20px); /* Full width minus padding */
+        width: calc(100% - 20px); 
         z-index: 10;
       }
 
       .suggestions {
         width: calc(100% - 20px);
-        top: 100px; /* Move suggestions below the expanded input */
+        top: 100px;
         left: 10px;
       }
 
@@ -940,7 +941,7 @@
     const authLink = document.getElementById('authLink');
     const logoutBtn = document.getElementById('logoutBtn');
     
-    // --- NEW SEARCH TOGGLE ELEMENTS ---
+    // --- SEARCH TOGGLE ELEMENTS ---
     const mobileSearchIcon = document.getElementById('mobileSearchIcon');
     const searchInput = document.getElementById('search');
 
@@ -970,17 +971,22 @@
         }
     });
     
-    // --- NEW Search Toggle Logic ---
+    // --- 🎯 UPDATED Search Toggle Logic to handle visibility ---
     mobileSearchIcon.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // Toggle the visibility of the search input
-      if (searchInput.style.display === 'block') {
-        searchInput.style.display = 'none';
-        suggestions.style.display = 'none';
-      } else {
-        searchInput.style.display = 'block';
-        searchInput.focus();
+      // Determine if the screen is mobile-sized (matching the CSS media query)
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+      if (isMobile) {
+        // Toggle the visibility only if on a mobile screen
+        if (searchInput.style.display === 'block') {
+          searchInput.style.display = 'none';
+          suggestions.style.display = 'none';
+        } else {
+          searchInput.style.display = 'block';
+          searchInput.focus();
+        }
       }
     });
     
@@ -1028,8 +1034,15 @@
     });
 
     document.addEventListener('click', (e) => {
+      // Hide suggestions when clicking outside the search area, regardless of mobile view
       if(!document.querySelector('.search-container').contains(e.target)){
         suggestions.style.display = 'none';
+        
+        // 💡 OPTIONAL: Hide the input bar again if user clicks outside on mobile
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (isMobile && searchInput.style.display === 'block') {
+             // searchInput.style.display = 'none'; // Uncomment this line if you want the search bar to automatically disappear when clicking away on mobile.
+        }
       }
     });
 
