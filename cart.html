@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart - FitBite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ... (Your existing CSS here) ... */
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="cart-header">
+      <h2>
+        <i class="fas fa-shopping-cart"></i>
+        Your Shopping Cart
+      </h2>
+      <div class="cart-count" id="cart-count">0 Items</div>
+    </div>
+
+    <div class="cart-content" id="cart-content"></div>
+
+    <div id="cart-summary"></div>
+
+    <div id="loading-message" style="text-align:center; padding: 50px; font-size: 1.2rem; color: #4e342e;">
+        Checking session...
+    </div>
+  </div>
+
+  <script type="module" src="./supabaseClient.js"></script>
+
+  <script type="module">
+    import { supabase } from './supabaseClient.js';
+    
+    // --- Page Protection ---
+    async function checkSessionAndRender() {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        document.getElementById('loading-message').style.display = 'none';
+
+        if (!user) {
+            // User is NOT logged in: Block access and redirect
+            document.querySelector('.container').innerHTML = `
+                <div class="empty-cart" style="background:none;">
+                    <i class="fas fa-lock"></i>
+                    <h3>Access Denied</h3>
+                    <p>Please log in to view your shopping cart.</p>
+                    <a href="login.html" class="start-shopping-btn">
+                        Go to Login
+                    </a>
+                </div>
+            `;
+        } else {
+            // User is logged in: Proceed to render cart (Your existing code)
+            renderCart();
+            // 💡 TO DO: In a real app, you would now load cart data from the Supabase Database for this 'user'
+        }
+    }
+
+
+    // --- Existing Cart Functions (Updated to be global for event handlers) ---
+
+    // Define functions globally or ensure event handlers can access them
+    window.getCartData = function() {
+      // ... (Your existing getCartData logic) ...
+      try {
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        if (Array.isArray(cart)) return cart;
+      } catch (e) {}
+      // Fallback for demo, but should eventually hit Supabase
+      return [
+        { name: "Chocolate Protein Bar", price: 149, quantity: 2, img: "https://images.unsplash.com/photo-1604480133435-25b9184b6c24?w=400" },
+        { name: "Peanut Butter Delight", price: 179, quantity: 1, img: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400" }
+      ];
+    }
+
+    window.saveCartData = function(cart) {
+      // ... (Your existing saveCartData logic) ...
+      try {
+        localStorage.setItem('cart', JSON.stringify(cart));
+      } catch (e) {}
+    }
+
+    window.renderCart = function() {
+      // ... (Your existing renderCart logic) ...
+      const cart = getCartData();
+      const cartContainer = document.getElementById('cart-content');
+      const summaryContainer = document.getElementById('cart-summary');
+      const cartCount = document.getElementById('cart-count');
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added any FitBite products yet!</p>
+            <a href="index.html" class="start-shopping-btn">
+              Start Shopping
+            </a>
+          </div>
+        `;
+        summaryContainer.innerHTML = '';
+        cartCount.textContent = '0 Items';
+        return;
+      }
+
+      let total = 0;
+      let html = '';
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        html += `
+          <div class="cart-item">
+            <img src="${item.img}" alt="${item.name}" class="item-image">
+            <div class="item-details">
+              <h4>${item.name}</h4>
+              <div class="item-price">₹${item.price} each</div>
+              <div class="quantity-section">
+                <div class="quantity-controls">
+                  <button onclick="changeQuantity(${index}, -1)"><i class="fas fa-minus"></i></button>
+                  <span>${item.quantity}</span>
+                  <button onclick="changeQuantity(${index}, 1)"><i class="fas fa-plus"></i></button>
+                </div>
+                <button class="remove-btn" onclick="removeItem(${index})"><i class="fas fa-trash"></i> Remove</button>
+              </div>
+            </div>
+            <div class="item-total">
+              <div class="item-total-price">₹${itemTotal}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      cartContainer.innerHTML = html;
+
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = `${totalItems} Item${totalItems !== 1 ? 's' : ''}`;
+
+      const shippingThreshold = 500;
+      const flatShippingCost = 50;
+
+      const subtotal = total;
+      const shipping = subtotal > shippingThreshold ? 0 : flatShippingCost;
+      const finalTotal = subtotal + shipping;
+
+      summaryContainer.innerHTML = `
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹${subtotal}</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping ${shipping === 0 ? '(Free!)' : ''}</span>
+            <span>${shipping === 0 ? 'FREE' : '₹' + shipping}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>₹${finalTotal}</span>
+          </div>
+          <div class="actions">
+            <a href="index.html" class="back-btn">
+              <i class="fas fa-arrow-left"></i>
+              Continue Shopping
+            </a>
+            <a href="order.html" class="checkout-btn">
+              <i class="fas fa-credit-card"></i>
+              Proceed to Checkout
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    window.changeQuantity = function(index, delta) {
+      let cart = getCartData();
+      cart[index].quantity += delta;
+      if (cart[index].quantity < 1) cart[index].quantity = 1;
+      saveCartData(cart);
+      renderCart();
+    }
+
+    window.removeItem = function(index) {
+      let cart = getCartData();
+      cart.splice(index, 1);
+      saveCartData(cart);
+      renderCart();
+    }
+
+    // Start the authentication check process
+    checkSessionAndRender();
+  </script>
+
+</body>
+</html>

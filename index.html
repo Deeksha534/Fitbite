@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBite Protein Bars</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Reset & Variables */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #b5835a;
+      --color-primary-dark: #8b6644;
+      --color-secondary: #d2a679;
+      --color-accent: #4e342e;
+      --color-bg: #f5f1ed;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--color-bg);
+      scroll-behavior: smooth;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 50px;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .logo img:hover {
+      transform: scale(1.1);
+    }
+
+    .logo span {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--color-accent);
+    }
+
+    /* Search */
+    .search-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    .search-container input {
+      width: 70%;
+      max-width: 500px;
+      padding: 10px 15px;
+      border: 2px solid var(--color-accent);
+      border-radius: 25px;
+      outline: none;
+      font-size: 1rem;
+      background: #fff;
+    }
+
+    /* Suggestions */
+    .suggestions {
+      position: absolute;
+      top: calc(100% + 5px);
+      width: 60%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 12px;
+      display: none;
+      flex-direction: column;
+      z-index: 3;
+      max-height: 350px;
+      overflow-y: auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .suggestion-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background 0.3s ease;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .suggestion-item:hover {
+      background: var(--color-secondary);
+      color: var(--color-accent);
+    }
+
+    /* Top Icons */
+    .top-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-icons a {
+      color: var(--color-accent);
+      font-size: 1.3rem;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .top-icons a:hover {
+      color: var(--color-primary);
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #e74c3c;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+      position: relative;
+      padding: 100px 20px 50px;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #fff;
+      animation: float 4s ease-in-out infinite;
+      margin-bottom: 20px;
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 30px;
+      opacity: 0.95;
+    }
+
+    .hero-btn {
+      background: var(--color-accent);
+      color: #fff;
+      padding: 15px 35px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-btn:hover {
+      background: var(--color-primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-ad {
+  background: url('images/shop.jpeg') center/cover no-repeat; /* Add your background image */
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  color: white; /* Text color for contrast */
+}
+
+.hero-ad::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: rgba(0,0,0,0.3); /* optional overlay effect */
+  border-radius: 50%;
+}
+
+.hero-ad h3 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: #ffffff; /* make text visible over image */
+}
+
+.hero-ad p {
+  color: #fff; 
+}
+
+.hero-ad .offer-btn {
+  background: var(--color-primary);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.hero-ad .offer-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* Navigation */
+    nav {
+      background: var(--color-primary);
+      padding: 15px;
+      text-align: center;
+      position: sticky;
+      top: 70px;
+      z-index: 90;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    nav a {
+      margin: 0 20px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--color-accent);
+    }
+
+    /* Sections */
+    .section {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 50px 30px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      font-size: 2.5rem;
+      color: var(--color-accent);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .section p {
+      font-size: 1.1rem;
+      color: #555;
+      line-height: 1.8;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+
+    /* Feature Cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border-bottom: 4px solid var(--color-primary);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-card i {
+      font-size: 3rem;
+      color: var(--color-primary);
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.4rem;
+      color: var(--color-accent);
+      margin-bottom: 15px;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #666;
+      text-align: center;
+    }
+
+    /* Product Cards */
+    /* Ensure product cards align perfectly */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  align-items: stretch; /* make all cards equal height */
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.product-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.product-info h3 {
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  margin-bottom: 10px;
+}
+
+.product-info p {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: auto; /* keeps text flexible */
+}
+
+.product-btn {
+  background: var(--color-primary);
+  color: white;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.product-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+    .new-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #e74c3c;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    /* Benefits Section */
+    .benefits-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .benefits-list {
+      list-style: none;
+    }
+
+    .benefits-list li {
+      display: flex;
+      align-items: start;
+      margin-bottom: 25px;
+    }
+
+    .benefits-list i {
+      font-size: 2rem;
+      color: var(--color-primary);
+      margin-right: 20px;
+      margin-top: 5px;
+    }
+
+    .benefits-list strong {
+      display: block;
+      font-size: 1.2rem;
+      color: var(--color-accent);
+      margin-bottom: 5px;
+    }
+
+    .benefits-img {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Reviews Section */
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .review-card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-top: 6px solid var(--color-primary);
+      position: relative;
+    }
+
+    .review-stars {
+      color: #ffc107;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .review-quote {
+      font-size: 3rem;
+      color: var(--color-primary);
+      opacity: 0.2;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+    }
+
+    .review-text {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .review-author {
+      font-weight: bold;
+      color: var(--color-accent);
+      font-size: 0.95rem;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--color-accent) 0%, #2c1810 100%);
+      color: white;
+      padding: 60px 20px 20px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-section h4 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--color-secondary);
+    }
+
+    .footer-section p, .footer-section li {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      opacity: 1;
+      color: var(--color-secondary);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-icons a {
+      width: 40px;
+      height: 40px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      background: var(--color-secondary);
+      transform: scale(1.1);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+
+      .benefits-content {
+        grid-template-columns: 1fr;
+      }
+
+      .benefits-img {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="logo">
+      <img src="images/logo.jpeg" alt="FitBite Logo">
+      <span>FitBite</span>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="search" placeholder="Search for products...">
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+
+    <div class="top-icons">
+      <a href="login.html" id="authLink" aria-label="Account"><i class="fa fa-user"></i></a>
+      <a href="wishlist.html" aria-label="Wishlist"><i class="fa fa-heart"></i></a>
+      <a href="cart.html" aria-label="Cart">
+        <i class="fa fa-shopping-cart"></i>
+      </a>
+      <a href="track.html" aria-label="Track Order"><i class="fa fa-truck"></i></a>
+      <a href="#" id="logoutBtn" style="display:none;" aria-label="Logout"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>FITBITE PROTEIN BARS</h1>
+        <p>Discover the perfect blend of taste and nutrition. FitBite Protein Bars are crafted for healthy living without compromising on delicious flavors.</p>
+        <a href="#flavors" class="hero-btn">Explore More <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="hero-ad">
+        <h3>50% OFF</h3>
+        <p style="color: #ffffff; font-size: 1.3rem; font-weight: bold;">Summer Starter Packs!</p>
+        <p>Fuel your training goals with our limited-time bundles.</p>
+        <a href="#flavors" class="offer-btn">Claim Offer <i class="fas fa-tags"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#flavors">Flavors</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#reviews">Reviews</a>
+  </nav>
+
+  <div class="section" id="about">
+    <h2>Our Story: Health First</h2>
+    <p>We believe that snacking should fuel your body and delight your taste buds. FitBite is your partner in achieving your fitness goals.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <i class="fas fa-leaf"></i>
+        <h3>Natural Ingredients</h3>
+        <p>Made with only the highest quality, natural, and wholesome ingredients. No artificial fillers or preservatives.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-flask"></i>
+        <h3>Lab Tested Quality</h3>
+        <p>Every batch is lab-tested and certified to ensure maximum protein content and quality assurance.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-recycle"></i>
+        <h3>Sustainable Sourcing</h3>
+        <p>Committed to eco-friendly practices and responsibly sourced ingredients globally.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="flavors">
+    <h2>Explore Our Delicious Flavors</h2>
+    <p>From classic chocolate to exotic blends, find your perfect protein partner.</p>
+    <div class="product-grid">
+      <div class="product-card">
+        <span class="new-badge">NEW!</span>
+        <img src="images/choco-almond.jpeg" alt="Chocolate Almond Crunch">
+        <div class="product-info">
+          <h3>Chocolate Almond Crunch</h3>
+          <p>20g Protein, 4g Fiber</p>
+          <button class="product-btn">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <img src="images/peanut-fudge.jpeg" alt="Peanut Butter Fudge">
+        <div class="product-info">
+          <h3>Peanut Butter Fudge</h3>
+          <p>22g Protein, Low Sugar</p>
+          <button class="product-btn">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <img src="images/berry-blast.jpeg" alt="Berry Blast">
+        <div class="product-info">
+          <h3>Berry Blast</h3>
+          <p>18g Protein, Natural Antioxidants</p>
+          <button class="product-btn">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <img src="images/caramel-coffee.jpeg" alt="Caramel Coffee Delight">
+        <div class="product-info">
+          <h3>Caramel Coffee Delight</h3>
+          <p>20g Protein, Zero Guilt</p>
+          <button class="product-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="benefits">
+    <h2>The Benefits of FitBite</h2>
+    <p>More than just a snack, FitBite is engineered to support your active lifestyle, whether you're hitting the gym or powering through a busy day.</p>
+     <div class="benefits-content">
+      <ul class="benefits-list">
+        <li>
+          <i class="fas fa-dumbbell"></i>
+          <div>
+            <strong>Muscle Recovery</strong>
+            High-quality protein blends designed for post-workout repair.
+          </div>
+        </li>
+        <li>
+          <i class="fas fa-bolt"></i>
+          <div>
+            <strong>Sustained Energy</strong>
+            Balanced macros to keep you full and energized for hours.
+          </div>
+        </li>
+        <li>
+          <i class="fas fa-clock"></i>
+          <div>
+            <strong>Convenient Nutrition</strong>
+            The perfect meal replacement or boost on-the-go.
+          </div>
+        </li>
+        <li>
+          <i class="fas fa-heart"></i>
+          <div>
+            <strong>Guilt-Free Indulgence</strong>
+            Low sugar, gluten-free & vegan options available.
+          </div>
+        </li>
+      </ul>
+
+      <img src="images/benefits.jpeg" alt="Fitness lifestyle" class="benefits-img">
+    </div>
+  </div>
+
+  <div class="section" id="reviews">
+    <h2>What Our Customers Say</h2>
+    <p>Real people, real results. See why FitBite is the #1 choice for healthy snacking.</p>
+    <div class="review-grid">
+      <div class="review-card">
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+        <i class="fas fa-quote-left review-quote"></i>
+        <p class="review-text">"Finally, a protein bar that doesn't taste like cardboard! The Peanut Butter Fudge is my daily addiction."</p>
+        <p class="review-author">- Sarah K., Marathon Runner</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <i class="fas fa-quote-left review-quote"></i>
+        <p class="review-text">"I use the Caramel Coffee as a perfect meal replacement on busy workdays. Highly recommend for nutrition and taste."</p>
+        <p class="review-author">- Mark D., Software Engineer</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <i class="fas fa-quote-left review-quote"></i>
+        <p class="review-text">"Great clean ingredients and the Chocolate Almond has a fantastic crunch. A staple in my gym bag now."</p>
+        <p class="review-author">- Jessica L., Fitness Instructor</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Contact Us</h4>
+        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        <p><i class="fas fa-envelope"></i> hello@fitbite.com</p>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Fitness Street, Health City</p>
+        <div class="social-icons">
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#flavors">Chocolate Bars</a></li>
+          <li><a href="#flavors">Peanut Butter Bars</a></li>
+          <li><a href="#flavors">Berry Bars</a></li>
+          <li><a href="#flavors">Coffee Bars</a></li>
+          <li><a href="#flavors">All Products</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#">Nutrition Guide</a></li>
+          <li><a href="#">Fitness Tips</a></li>
+          <li><a href="#">Recipes</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Our Promise</h4>
+        <p>✓ Premium Quality - Lab-tested and certified</p>
+        <p>✓ Natural Ingredients - No artificial additives</p>
+        <p>✓ Sustainable - Eco-friendly practices</p>
+        <p>✓ Health First - Supporting your fitness goals</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 FitBite. All rights reserved. Fuel your fitness journey.</p>
+      <p style="margin-top: 10px;">
+        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Shipping Info</a>
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="./supabaseClient.js"></script>
+
+  <script type="module">
+    import { supabase } from './supabaseClient.js';
+    
+    const authLink = document.getElementById('authLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // --- Authentication Check (Session) ---
+    async function checkAuth() {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+            // User is logged in
+            authLink.style.display = 'none'; // Hide login link
+            logoutBtn.style.display = 'block'; // Show logout button
+        } else {
+            // User is logged out
+            authLink.href = 'login.html';
+            logoutBtn.style.display = 'none';
+        }
+    }
+
+    // --- Logout Handler ---
+    logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const { error } = await supabase.auth.signOut(); // 🎯 Supabase Logout Call
+        if (error) {
+            console.error('Logout Error:', error.message);
+            alert("Logout failed. See console for details.");
+        } else {
+            alert('Logged out successfully!');
+            window.location.reload(); // Reload the page to update UI
+        }
+    });
+    
+    // Run the check when the page loads
+    checkAuth();
+    
+    // --- Existing Search Suggestion & Product Redirect Functions ---
+    const products = [
+      {name:"Chocolate Almond Crunch Bar", flavor:"chocolate"},
+      {name:"Caramel Coffee Delight Bar", flavor:"almond"},
+      {name:"Berry Blast Bar", flavor:"berry"},
+      {name:"Peanut Fudge Bar", flavor:"peanut"},
+      
+    ];
+
+    const search = document.getElementById('search');
+    const suggestions = document.getElementById('suggestions');
+
+    search.addEventListener('input', () => {
+      const input = search.value.toLowerCase();
+      suggestions.innerHTML = '';
+      if(input.trim() === '') { 
+        suggestions.style.display = 'none'; 
+        return; 
+      }
+      const filtered = products.filter(p => p.name.toLowerCase().includes(input));
+      if(filtered.length > 0){
+        filtered.forEach(p => {
+          const item = document.createElement('div');
+          item.classList.add('suggestion-item');
+          item.textContent = p.name;
+          item.addEventListener('click', () => {
+            if(p.flavor){
+              viewProduct(p.flavor);
+            } else {
+              alert("Product details not available for this item.");
+            }
+          });
+          suggestions.appendChild(item);
+        });
+        suggestions.style.display = 'flex';
+      } else {
+        suggestions.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if(!document.querySelector('.search-container').contains(e.target)){
+        suggestions.style.display = 'none';
+      }
+    });
+
+    // --- Product Redirect Function ---
+    function viewProduct(flavor){
+      localStorage.setItem("selectedFlavor", flavor);
+      window.location.href = "product.html";
+    }
+  </script>
+
+</body>
+</html>

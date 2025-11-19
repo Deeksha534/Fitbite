@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBite Product Details</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fafafa;
+      color: #333;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      background-color: #222;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    .logo img {
+      width: 80px;
+      border-radius: 10px;
+      margin-right: 10px;
+    }
+
+    .top-bar h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    /* Product Page */
+    .product-page {
+      max-width: 900px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .product-page img {
+      width: 300px;
+      border-radius: 14px;
+      margin: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .product-info {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
+    }
+
+    .product-info h2 {
+      font-size: 28px;
+      margin-bottom: 15px;
+      color: #222;
+    }
+
+    .product-info p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .quantity-container {
+      margin-top: 15px;
+    }
+
+    .quantity-container label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .quantity-container input {
+      width: 60px;
+      padding: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .price {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 20px;
+      color: #b5835a;
+    }
+
+    .buttons {
+      margin-top: 25px;
+    }
+
+    .buttons button {
+      padding: 12px 24px;
+      margin-right: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .add-cart {
+      background-color: #ff9f43;
+      color: white;
+    }
+
+    .add-cart:hover {
+      background-color: #ff7b00;
+      transform: scale(1.05);
+    }
+
+    .go-cart {
+      background-color: #4e342e;
+      color: white;
+    }
+
+    .go-cart:hover {
+      background-color: #b5835a;
+      transform: scale(1.05);
+    }
+
+    .back-btn {
+      background-color: #eee;
+      color: #333;
+    }
+
+    .back-btn:hover {
+      background-color: #ddd;
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #222;
+      color: white;
+      margin-top: 40px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="logo">
+      <img src="images/logo.jpeg" alt="FitBite Logo">
+    </div>
+    <h1>FitBite Product Details</h1>
+  </div>
+
+  <div class="product-page">
+    <img id="product-img" src="images/default.jpg" alt="Product Image">
+    <div class="product-info">
+      <h2 id="product-name">Product Name</h2>
+      <p id="product-desc">Product description will appear here...</p>
+      
+      <div class="quantity-container">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" min="1" value="1">
+      </div>
+      
+      <div class="price" id="product-price">₹0</div>
+      
+      <div class="buttons">
+        <button class="add-cart" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="go-cart" onclick="goToCart()">Go to Cart</button>
+        <button class="back-btn" onclick="goBack()">⬅ Back</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 FitBite. All Rights Reserved.</p>
+  </footer>
+
+  <script type="module" src="./supabaseClient.js"></script>
+  
+  <script>
+    const products = {
+      chocolate: {name:"Choco Almond", desc:"Rich chocolate bar with 20g protein.", img:"images/choco-almond.jpeg", price:120},
+      berry: {name:"Berry Blast", desc:"Strawberries, blueberries & raspberries.", img:"images/berry-blast.jpeg", price:110},
+      almond: {name:"Caramel Coffee", desc:"Crunchy almonds with caramel.", img:"images/caramel-coffee.jpeg", price:130},
+      peanut: {name:"Peanut Fudge", desc:"Roasted peanuts with honey.", img:"images/peanut-fudge.jpeg", price:125}
+    };
+
+    const selected = localStorage.getItem("selectedFlavor");
+
+    const productNameEl = document.getElementById("product-name");
+    const productDescEl = document.getElementById("product-desc");
+    const productImgEl = document.getElementById("product-img");
+    const productPriceEl = document.getElementById("product-price");
+    const quantityEl = document.getElementById("quantity");
+
+    if(selected && products[selected]){
+      const p = products[selected];
+      productNameEl.textContent = p.name;
+      productDescEl.textContent = p.desc;
+      productImgEl.src = p.img;
+      productImgEl.alt = p.name;
+      productPriceEl.textContent = `₹${p.price}`;
+    }
+
+    quantityEl.addEventListener('input', () => {
+      const qty = parseInt(quantityEl.value) || 1;
+      productPriceEl.textContent = `₹${products[selected].price * qty}`;
+    });
+
+    function addToCart(){
+      const qty = parseInt(quantityEl.value) || 1;
+      const product = products[selected];
+      if(!product) return;
+
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      // Check if product already exists in cart
+      const index = cart.findIndex(item => item.flavor === selected);
+      if(index > -1){
+        cart[index].quantity += qty;
+      } else {
+        cart.push({
+          flavor: selected,
+          name: product.name,
+          price: product.price,
+          quantity: qty,
+          img: product.img
+        });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert(`${product.name} (x${qty}) added to cart!`);
+    }
+
+    function goToCart(){
+      window.location.href = "cart.html";
+    }
+
+    function goBack(){
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

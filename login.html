@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBite Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #d2a679;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 350px;
+      text-align: center;
+    }
+
+    .login-container h2 {
+      color: #4e342e;
+      margin-bottom: 25px;
+    }
+
+    /* Targeting both email and password inputs */
+    .login-container input[type="email"],
+    .login-container input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #b5835a;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .login-container button {
+      width: 95%;
+      padding: 12px;
+      background-color: #4e342e;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.3s ease;
+    }
+
+    .login-container button:hover {
+      background-color: #b5835a;
+    }
+
+    .login-container p {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .login-container a {
+      color: #4e342e;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-container a:hover {
+      color: #b5835a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2><i class="fa fa-user"></i> User Login</h2>
+    
+    <form id="login-form">
+      <input type="email" placeholder="Email Address" id="email" required><br>
+      <input type="password" placeholder="Password" id="password" required><br>
+      <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="signup.html">Create one</a></p>
+    <p><a href="index.html"><i class="fa fa-arrow-left"></i> Back to Home</a></p>
+  </div>
+  
+  <script type="module" src="./supabaseClient.js"></script>
+
+  <script type="module">
+    import { supabase } from './supabaseClient.js';
+
+    const form = document.getElementById('login-form');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // 🎯 Supabase Login Call
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) {
+        alert(`Login Error: ${error.message}`);
+      } else {
+        alert('✅ Login successful!');
+        window.location.href = 'index.html'; // Redirect to the main page
+      }
+    });
+  </script>
+
+</body>
+</html>
