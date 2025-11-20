@@ -402,6 +402,13 @@
       margin-bottom: auto;
     }
 
+    /* 🎯 Wishlist Button Group Styles */
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
     .product-btn {
       background: var(--color-primary);
       color: white;
@@ -412,12 +419,35 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-top: 15px;
+      flex-grow: 1; /* Take up remaining space */
     }
 
     .product-btn:hover {
       background: var(--color-primary-dark);
     }
+
+    .wishlist-btn {
+      background: none;
+      border: 2px solid var(--color-primary);
+      color: var(--color-primary);
+      padding: 12px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 50px; /* Fixed width for icon */
+      flex-shrink: 0;
+    }
+
+    .wishlist-btn i {
+      font-size: 1rem;
+    }
+
+    .wishlist-btn:hover {
+      background: var(--color-primary);
+      color: white;
+      transform: scale(1.05);
+    }
+
 
     .new-badge {
       position: absolute;
@@ -587,14 +617,14 @@
       opacity: 0.8;
     }
 
-    /* 🎯 MOBILE RESPONSIVENESS FIXES (Enhanced Media Query) */
+    /* 🎯 MOBILE RESPONSIVENESS FIXES */
     @media (max-width: 768px) {
       
       /* 1. Header/Top Bar Adjustments */
       .top-bar {
         flex-wrap: wrap;
         padding: 10px;
-        height: 50px; /* Fixed height for the visible bar */
+        height: 50px; 
       }
 
       .logo {
@@ -611,7 +641,7 @@
         order: 2;
         width: auto;
         flex: 0;
-        padding: 0 10px 0 0;
+        padding: 0;
       }
       
       /* Show the mobile icon */
@@ -622,22 +652,22 @@
       /* Hide the input box on mobile by default */
       .search-container input {
         display: none; 
-        /* When input is visible (via JS toggle), position it absolutely */
         position: absolute;
-        top: 50px; /* CRITICAL: Position right under the fixed top bar */
+        top: 50px; 
         left: 0; 
         width: 100%; 
+        max-width: 100%;
         padding: 10px 15px; 
         border-radius: 0;
-        z-index: 1000; /* CRITICAL: Ensure it overlays nav and hero */
+        z-index: 1000; 
+        box-sizing: border-box;
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
       }
 
       .suggestions {
-        /* Align suggestions right below the expanded input */
         width: 100%;
         max-width: 100%;
-        top: 95px; /* Adjust slightly below the input field */
+        top: 95px; 
         left: 0;
         z-index: 999;
         border-radius: 0;
@@ -764,13 +794,19 @@
     <h2>Explore Our Delicious Flavors</h2>
     <p>From classic chocolate to exotic blends, find your perfect protein partner.</p>
     <div class="product-grid">
+      
       <div class="product-card">
         <span class="new-badge">NEW!</span>
         <img src="images/choco-almond.jpeg" alt="Chocolate Almond Crunch">
         <div class="product-info">
           <h3>Chocolate Almond Crunch</h3>
           <p>20g Protein, 4g Fiber</p>
-          <button class="product-btn">Add to Cart</button>
+          <div class="product-actions">
+            <button class="product-btn" onclick="addToCart(event, 'chocolate-almond', 120, 'images/choco-almond.jpeg')">Add to Cart</button>
+            <button class="wishlist-btn" onclick="addToWishlist(event, 'Chocolate Almond Crunch', 120, 'images/choco-almond.jpeg')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -779,7 +815,12 @@
         <div class="product-info">
           <h3>Peanut Butter Fudge</h3>
           <p>22g Protein, Low Sugar</p>
-          <button class="product-btn">Add to Cart</button>
+          <div class="product-actions">
+            <button class="product-btn" onclick="addToCart(event, 'peanut-fudge', 125, 'images/peanut-fudge.jpeg')">Add to Cart</button>
+            <button class="wishlist-btn" onclick="addToWishlist(event, 'Peanut Butter Fudge', 125, 'images/peanut-fudge.jpeg')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -788,7 +829,12 @@
         <div class="product-info">
           <h3>Berry Blast</h3>
           <p>18g Protein, Natural Antioxidants</p>
-          <button class="product-btn">Add to Cart</button>
+          <div class="product-actions">
+            <button class="product-btn" onclick="addToCart(event, 'berry-blast', 110, 'images/berry-blast.jpeg')">Add to Cart</button>
+            <button class="wishlist-btn" onclick="addToWishlist(event, 'Berry Blast', 110, 'images/berry-blast.jpeg')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -797,7 +843,12 @@
         <div class="product-info">
           <h3>Caramel Coffee Delight</h3>
           <p>20g Protein, Zero Guilt</p>
-          <button class="product-btn">Add to Cart</button>
+          <div class="product-actions">
+            <button class="product-btn" onclick="addToCart(event, 'caramel-coffee', 130, 'images/caramel-coffee.jpeg')">Add to Cart</button>
+            <button class="wishlist-btn" onclick="addToWishlist(event, 'Caramel Coffee Delight', 130, 'images/caramel-coffee.jpeg')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1042,19 +1093,53 @@
     });
 
     document.addEventListener('click', (e) => {
-      // Hiding suggestions when clicking outside the search area is still useful
       if(!document.querySelector('.search-container').contains(e.target)){
         suggestions.style.display = 'none';
-        
-        // IMPORTANT: We do NOT hide searchInput here. It remains visible until the icon is clicked again.
       }
     });
 
     // --- Product Redirect Function ---
     function viewProduct(flavor){
+      // This function logic can remain the same
       localStorage.setItem("selectedFlavor", flavor);
       window.location.href = "product.html";
     }
+
+    // --- NEW: Add to Wishlist Function (uses local storage for demo) ---
+    window.addToWishlist = function(e, name, price, img) {
+        e.preventDefault();
+        
+        const item = { name, price, image: img };
+
+        let wishlist = [];
+        try {
+            wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        } catch (err) {
+            console.error("Error loading wishlist from storage:", err);
+        }
+
+        // Check if the item is already in the wishlist
+        if (wishlist.some(i => i.name === name)) {
+            alert(`${name} is already in your Wishlist!`);
+        } else {
+            wishlist.push(item);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            alert(`${name} added to Wishlist!`);
+            // 💡 TO DO: Change icon to solid heart (fas fa-heart) for visual feedback
+        }
+    }
+
+    // --- Add to Cart Function (uses local storage) ---
+    window.addToCart = function(e, flavor, price, img) {
+        e.preventDefault();
+        
+        // This is a placeholder since the final add to cart logic is handled on product.html/cart.html
+        alert(`Adding ${flavor} to cart. Use product page for quantity control.`);
+        
+        // You would typically redirect to the product detail page or handle the cart insertion here
+        viewProduct(flavor.split('-')[0]); // Redirects to view product details
+    }
+
   </script>
 
 </body>
