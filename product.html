@@ -100,21 +100,25 @@
 
     .buttons {
       margin-top: 25px;
+      display: flex; /* Make buttons align nicely */
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .buttons button {
       padding: 12px 24px;
-      margin-right: 10px;
       font-size: 16px;
       border: none;
       border-radius: 30px;
       cursor: pointer;
       transition: 0.3s ease;
+      flex-grow: 1;
     }
 
     .add-cart {
       background-color: #ff9f43;
       color: white;
+      flex-basis: 150px; /* Give it a decent starting size */
     }
 
     .add-cart:hover {
@@ -125,11 +129,27 @@
     .go-cart {
       background-color: #4e342e;
       color: white;
+      flex-basis: 150px;
     }
 
     .go-cart:hover {
       background-color: #b5835a;
       transform: scale(1.05);
+    }
+    
+    .wishlist-btn-detail {
+        background-color: #f5f5f5;
+        color: #e74c3c;
+        border: 2px solid #e74c3c;
+        flex-basis: 50px; /* Small fixed size for icon */
+        flex-grow: 0;
+        padding: 10px 15px;
+    }
+    
+    .wishlist-btn-detail:hover {
+        background-color: #e74c3c;
+        color: white;
+        transform: scale(1.05);
     }
 
     .back-btn {
@@ -150,16 +170,16 @@
       margin-top: 40px;
     }
 
-    /* 🎯 MOBILE RESPONSIVENESS FIXES */
+    /* MOBILE RESPONSIVENESS FIXES */
     @media (max-width: 768px) {
         .product-page {
-            flex-direction: column; /* Stack image and info vertically */
+            flex-direction: column; 
             padding: 20px;
             margin: 20px auto;
         }
 
         .product-page img {
-            width: 100%; /* Image takes full width */
+            width: 100%;
             max-width: 400px;
             margin: 0 0 20px 0;
         }
@@ -169,14 +189,13 @@
         }
 
         .buttons {
-            display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
         .buttons button {
             width: 100%;
-            margin-right: 0;
+            flex-basis: auto; /* Allow full width stacking */
         }
     }
   </style>
@@ -204,6 +223,9 @@
       
       <div class="buttons">
         <button class="add-cart" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="wishlist-btn-detail" onclick="addToWishlistDetail()">
+            <i class="far fa-heart"></i>
+        </button>
         <button class="go-cart" onclick="goToCart()">Go to Cart</button>
         <button class="back-btn" onclick="goBack()">⬅ Back</button>
       </div>
@@ -232,6 +254,9 @@
     const productPriceEl = document.getElementById("product-price");
     const quantityEl = document.getElementById("quantity");
 
+    // --- Product Detail Initialization ---
+    let currentProduct = null;
+    
     if(selected && products[selected]){
       const p = products[selected];
       productNameEl.textContent = p.name;
@@ -239,36 +264,66 @@
       productImgEl.src = p.img;
       productImgEl.alt = p.name;
       productPriceEl.textContent = `₹${p.price}`;
+      
+      currentProduct = {
+          flavor: selected,
+          name: p.name,
+          price: p.price,
+          img: p.img
+      };
     }
 
     quantityEl.addEventListener('input', () => {
-      const qty = parseInt(quantityEl.value) || 1;
-      productPriceEl.textContent = `₹${products[selected].price * qty}`;
+      if (currentProduct) {
+        const qty = parseInt(quantityEl.value) || 1;
+        productPriceEl.textContent = `₹${currentProduct.price * qty}`;
+      }
     });
 
+    // --- Add to Cart Logic ---
     function addToCart(){
-      const qty = parseInt(quantityEl.value) || 1;
-      const product = products[selected];
-      if(!product) return;
+      if (!currentProduct) return alert("Product data missing.");
 
+      const qty = parseInt(quantityEl.value) || 1;
+      
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
       // Check if product already exists in cart
-      const index = cart.findIndex(item => item.flavor === selected);
+      const index = cart.findIndex(item => item.flavor === currentProduct.flavor);
       if(index > -1){
         cart[index].quantity += qty;
       } else {
         cart.push({
-          flavor: selected,
-          name: product.name,
-          price: product.price,
-          quantity: qty,
-          img: product.img
+          ...currentProduct,
+          quantity: qty
         });
       }
 
       localStorage.setItem("cart", JSON.stringify(cart));
-      alert(`${product.name} (x${qty}) added to cart!`);
+      alert(`${currentProduct.name} (x${qty}) added to cart!`);
+    }
+
+    // --- NEW: Add to Wishlist Logic for Detail Page ---
+    function addToWishlistDetail() {
+        if (!currentProduct) return alert("Product data missing.");
+
+        const { name, price, img } = currentProduct;
+        const item = { name, price, image: img };
+
+        let wishlist = [];
+        try {
+            wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        } catch (err) {
+            console.error("Error loading wishlist from storage:", err);
+        }
+
+        if (wishlist.some(i => i.name === name)) {
+            alert(`${name} is already in your Wishlist!`);
+        } else {
+            wishlist.push(item);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            alert(`${name} added to Wishlist!`);
+        }
     }
 
     function goToCart(){
