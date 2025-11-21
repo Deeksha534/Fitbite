@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBite Support</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #C6966A; /* Main caramel theme */
+      color: #4A2E21;
+    }
+
+    .page-title {
+      text-align: center;
+      padding: 40px 0 10px;
+      font-size: 40px;
+      font-weight: 700;
+      color: #FFF8F0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 20px auto 60px;
+    }
+
+    .card {
+      background: #F6EADF;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #4A2E21;
+    }
+
+    /* FAQ STYLE */
+    .faq-item {
+      background: #F6EADF;
+      padding: 18px;
+      border-radius: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .faq-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 18px rgba(0,0,0,0.18);
+    }
+
+    .faq-question {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .faq-answer {
+      display: none;
+      margin-top: 10px;
+      color: #4A2E21;
+    }
+
+    footer {
+      background: #4A2E21;
+      color: #FFF8F0;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".faq-item").forEach(item => {
+        item.onclick = () => {
+          let ans = item.querySelector(".faq-answer");
+          ans.style.display = ans.style.display === "block" ? "none" : "block";
+        };
+      });
+    });
+  </script>
+</head>
+
+<body>
+
+<div class="page-title">Support & Help Center</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Contact Support</h2>
+    <p><strong>Email:</strong> support@fitbite.com</p>
+    <p><strong>Phone:</strong> +91 98765 43210</p>
+    <p><strong>Service Hours:</strong> Mon–Sat, 9 AM – 7 PM</p>
+  </div>
+
+  <div class="card">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">How do I track my order?</div>
+      <div class="faq-answer">Go to your account → My Orders → Track Order.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What is the return policy?</div>
+      <div class="faq-answer">Returns allowed within 7 days for unopened items.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">How long is delivery time?</div>
+      <div class="faq-answer">Usually 3–5 business days across India.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Can I cancel my order?</div>
+      <div class="faq-answer">Yes, if it hasn't been shipped yet.</div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  © 2025 FitBite | All Rights Reserved
+</footer>
+
+</body>
+</html>

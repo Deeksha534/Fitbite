@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness Tips - FitBite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: #f7f1e9;
+      color: #3d1f0f;
+    }
+
+    /* Header */
+    .header {
+      background: #ffffff;
+      padding: 15px 40px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      font-size: 22px;
+      font-weight: bold;
+      color: #3d1f0f;
+    }
+
+    /* Page Title */
+    .page-title {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 36px;
+      font-weight: 700;
+      color: #4b2e16;
+    }
+
+    .subtext {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 18px;
+      color: #6b4a2b;
+      margin-bottom: 40px;
+    }
+
+    /* Tips Container */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      padding: 0 40px 60px;
+    }
+
+    /* Tip Card */
+    .tip-card {
+      background: #ffffff;
+      border-radius: 25px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .tip-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.2);
+    }
+
+    .tip-icon {
+      font-size: 48px;
+      color: #b37a4c;
+      margin-bottom: 15px;
+    }
+
+    .tip-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #3d1f0f;
+    }
+
+    .tip-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #6b4a2b;
+    }
+
+    /* Back Button */
+    .back-btn {
+      display: block;
+      width: fit-content;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #b37a4c;
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .back-btn:hover {
+      background: #8a5a32;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">FitBite</div>
+
+  <h1 class="page-title">Fitness Tips & Healthy Habits</h1>
+  <p class="subtext">Simple, science-based tips to boost your energy, strength, and overall wellness ⚡💪</p>
+
+  <div class="tips-grid">
+
+    <!-- Card 1 -->
+    <div class="tip-card">
+      <i class="fas fa-dumbbell tip-icon"></i>
+      <div class="tip-title">Lift Weights 3× Weekly</div>
+      <div class="tip-desc">Build strength, increase metabolism, and tone your body with regular resistance training.</div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="tip-card">
+      <i class="fas fa-water tip-icon"></i>
+      <div class="tip-title">Stay Hydrated</div>
+      <div class="tip-desc">Drink at least 2–3 litres of water every day to stay energetic and boost recovery.</div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="tip-card">
+      <i class="fas fa-apple-alt tip-icon"></i>
+      <div class="tip-title">Eat Whole Foods</div>
+      <div class="tip-desc">Focus on fruits, vegetables, lean protein, and whole grains to fuel your workouts.</div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="tip-card">
+      <i class="fas fa-bed tip-icon"></i>
+      <div class="tip-title">Get 7–9 Hours Sleep</div>
+      <div class="tip-desc">Good sleep improves muscle recovery, mental clarity, and overall health.</div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="tip-card">
+      <i class="fas fa-running tip-icon"></i>
+      <div class="tip-title">Move Every Day</div>
+      <div class="tip-desc">A 20-minute walk, stretch, or light activity daily keeps your body active and flexible.</div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="tip-card">
+      <i class="fas fa-heartbeat tip-icon"></i>
+      <div class="tip-title">Do Cardio 2–3× Weekly</div>
+      <div class="tip-desc">Boost endurance and heart health with jogging, cycling, skipping, or HIIT.</div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="tip-card">
+      <i class="fas fa-carrot tip-icon"></i>
+      <div class="tip-title">Increase Protein Intake</div>
+      <div class="tip-desc">Protein supports muscle repair and keeps you full. Aim for 1–1.5g per kg body weight.</div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="tip-card">
+      <i class="fas fa-brain tip-icon"></i>
+      <div class="tip-title">Manage Stress</div>
+      <div class="tip-desc">Try meditation, journaling, or deep breathing to improve mental wellness.</div>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="tip-card">
+      <i class="fas fa-stopwatch tip-icon"></i>
+      <div class="tip-title">Be Consistent</div>
+      <div class="tip-desc">Small daily habits make big long-term results. Stay committed to your routine.</div>
+    </div>
+
+  </div>
+
+  <a href="index.html" class="back-btn">← Back to Home</a>
+
+</body>
+</html>

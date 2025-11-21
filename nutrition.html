@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutrition Guide - FitBite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: #f7f1e9;
+      color: #3d1f0f;
+    }
+
+    /* Header */
+    .header {
+      background: #ffffff;
+      padding: 15px 40px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      font-size: 22px;
+      font-weight: bold;
+      color: #3d1f0f;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 36px;
+      font-weight: 700;
+      color: #4b2e16;
+    }
+
+    .subtext {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 18px;
+      color: #6b4a2b;
+      margin-bottom: 40px;
+    }
+
+    /* Grid */
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      padding: 0 40px 60px;
+    }
+
+    /* Card */
+    .nutrition-card {
+      background: #ffffff;
+      border-radius: 25px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .nutrition-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.2);
+    }
+
+    .nutrition-icon {
+      font-size: 50px;
+      color: #b37a4c;
+      margin-bottom: 15px;
+    }
+
+    .nutrition-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #3d1f0f;
+    }
+
+    .nutrition-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #6b4a2b;
+    }
+
+    .back-btn {
+      display: block;
+      width: fit-content;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #b37a4c;
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .back-btn:hover {
+      background: #8a5a32;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="header">FitBite</div>
+
+  <h1 class="page-title">Nutrition Guide</h1>
+  <p class="subtext">Your complete guide to eating smarter, healthier, and more balanced ✨🥗</p>
+
+  <div class="nutrition-grid">
+
+    <!-- Card 1 -->
+    <div class="nutrition-card">
+      <i class="fas fa-seedling nutrition-icon"></i>
+      <div class="nutrition-title">Eat Whole Foods</div>
+      <div class="nutrition-desc">
+        Choose natural and unprocessed foods like fruits, vegetables, whole grains, and nuts for better energy and digestion.
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="nutrition-card">
+      <i class="fas fa-fish nutrition-icon"></i>
+      <div class="nutrition-title">Include Lean Proteins</div>
+      <div class="nutrition-desc">
+        Add foods such as chicken, eggs, tofu, and lentils to support muscle repair and metabolic health.
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="nutrition-card">
+      <i class="fas fa-bread-slice nutrition-icon"></i>
+      <div class="nutrition-title">Choose Complex Carbs</div>
+      <div class="nutrition-desc">
+        Whole wheat, oats, quinoa, and brown rice provide long-lasting energy and stabilize blood sugar levels.
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="nutrition-card">
+      <i class="fas fa-oil-can nutrition-icon"></i>
+      <div class="nutrition-title">Healthy Fats Are Essential</div>
+      <div class="nutrition-desc">
+        Include avocados, nuts, seeds, and olive oil for brain health and hormone balance.
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="nutrition-card">
+      <i class="fas fa-glass-water nutrition-icon"></i>
+      <div class="nutrition-title">Stay Hydrated</div>
+      <div class="nutrition-desc">
+        Drinking enough water improves metabolism, digestion, and overall performance.
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="nutrition-card">
+      <i class="fas fa-apple-alt nutrition-icon"></i>
+      <div class="nutrition-title">Fruits & Vegetables</div>
+      <div class="nutrition-desc">
+        Add a variety of colorful produce to your meals to get vitamins, minerals, and antioxidants.
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="nutrition-card">
+      <i class="fas fa-bolt nutrition-icon"></i>
+      <div class="nutrition-title">Limit Sugar Intake</div>
+      <div class="nutrition-desc">
+        Reduce sugary drinks and sweets to avoid energy crashes and maintain stable blood sugar.
+      </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="nutrition-card">
+      <i class="fas fa-balance-scale nutrition-icon"></i>
+      <div class="nutrition-title">Balanced Plates</div>
+      <div class="nutrition-desc">
+        Follow the 50-25-25 rule: 50% vegetables, 25% protein, 25% complex carbs for an ideal meal.
+      </div>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="nutrition-card">
+      <i class="fas fa-stopwatch nutrition-icon"></i>
+      <div class="nutrition-title">Don’t Skip Meals</div>
+      <div class="nutrition-desc">
+        Regular meals prevent overeating and keep your metabolism active throughout the day.
+      </div>
+    </div>
+
+  </div>
+
+  <a href="index.html" class="back-btn">← Back to Home</a>
+
+</body>
+</html>

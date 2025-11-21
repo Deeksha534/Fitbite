@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - FitBite</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #C8946E; /* Warm beige background */
+      color: #3A2A25; /* Dark brown text */
+    }
+
+    /* HEADER */
+    header {
+      background: #C8946E;
+      padding: 40px 0;
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 700;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    /* FAQ CONTAINER */
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 40px auto 80px auto;
+    }
+
+    .faq-item {
+      background: #FDF4EC; /* Light cream card */
+      margin-bottom: 18px;
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      transition: 0.25s ease;
+      cursor: pointer;
+      border-left: 6px solid #4A2C23; /* Dark brown accent line */
+    }
+
+    .faq-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .faq-question {
+      font-size: 20px;
+      font-weight: 700;
+      color: #362018;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      margin-top: 10px;
+      color: #4A3A32;
+      line-height: 1.6;
+      font-size: 16px;
+      transition: max-height 0.4s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 300px;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 60px;
+      padding: 30px;
+      background: #4A2C23; /* Dark chocolate brown */
+      text-align: center;
+      color: white;
+      font-size: 15px;
+      letter-spacing: 0.6px;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll(".faq-item").forEach(item => {
+        item.addEventListener("click", () => {
+          item.classList.toggle("active");
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+
+<header>
+  <h1>Frequently Asked Questions</h1>
+</header>
+
+<div class="container">
+
+  <div class="faq-item">
+    <div class="faq-question">What makes FitBite Protein Bars healthy?</div>
+    <div class="faq-answer">
+      FitBite bars are made using natural ingredients, high protein content, and no artificial additives.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">Are FitBite products suitable for weight loss?</div>
+    <div class="faq-answer">
+      Yes! They are low-calorie, high-protein, and designed to keep you full for longer—perfect for weight management.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">Do the bars contain any allergens?</div>
+    <div class="faq-answer">
+      Some bars may contain nuts or dairy. Always check the ingredient list before consuming.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">When should I consume protein bars?</div>
+    <div class="faq-answer">
+      Ideal times include pre-workout, post-workout, breakfast, or as a healthy mid-day snack.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">Are FitBite bars kid-friendly?</div>
+    <div class="faq-answer">
+      Yes, kids can enjoy them too! They’re nutritious, natural, and free from harmful additives.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 FitBite | All Rights Reserved
+</footer>
+
+</body>
+</html>
