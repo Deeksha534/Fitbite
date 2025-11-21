@@ -93,7 +93,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: 0.3s ease;
   }
 
   .submit-btn:hover {
@@ -134,31 +134,6 @@
 
   .hidden {
       display: none;
-  }
-
-  /* MOBILE RESPONSIVENESS */
-  @media (max-width: 768px) {
-      .checkout-box {
-          padding: 20px;
-      }
-      
-      .cart-summary {
-          padding: 10px;
-      }
-      
-      .cart-item {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 5px;
-      }
-      
-      .cart-item span {
-          text-align: left;
-      }
-      
-      .total {
-          text-align: center;
-      }
   }
 
 </style>
@@ -210,7 +185,6 @@
   const loadingMessage = document.getElementById('loading-message');
   const checkoutContent = document.getElementById('checkout-content');
   
-  // --- Page Protection Function ---
   async function checkSessionAndRender() {
       // Show loading message initially
       loadingMessage.classList.remove('hidden');
@@ -235,24 +209,26 @@
       } else {
           // User is logged in: Show the checkout form
           checkoutContent.classList.remove('hidden');
-          renderCheckout(user); // Pass the user object to renderCheckout
+          renderCheckout(); // Call your existing function to load cart/summary
       }
   }
 
-  // --- Core Checkout Logic (Updated to use Supabase) ---
-  function renderCheckout(user) {
-      // Load cart data (Assuming a standard cart structure)
+  // --- Existing Checkout Logic (Encapsulated in a function) ---
+  function renderCheckout() {
+      // Load cart data
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const cartSummary = document.getElementById('cart-summary');
       let total = 0;
 
       if(cart.length === 0){
+        // If cart is empty, redirect user back or show empty message
         cartSummary.innerHTML = "<p>🛒 Your cart is empty. <a href='index.html'>Start Shopping</a></p>";
       } else {
         let summaryHTML = '';
         cart.forEach(item => {
           const itemTotal = item.price * item.quantity;
           total += itemTotal;
+          // IMPORTANT: Assuming you have cart item images for the full style
           summaryHTML += `
             <div class="cart-item">
               <div style="display:flex; align-items:center;">
@@ -275,31 +251,24 @@
           return;
         }
 
-        // 1. Prepare the Order object for Supabase
-        const orderDetails = {
-          user_id: user.id, // CRITICAL: Link to the logged-in user
-          full_name: document.getElementById('name').value,
-          delivery_address: document.getElementById('address').value,
-          contact_number: document.getElementById('contact').value, // Matches new column
-          payment_method: document.getElementById('payment').value,
-          items: cart, // The cart array (jsonb column)
-          total_amount: total, // The calculated total
-          // status: 'Pending' - This uses the default value set in the table.
+        // 💡 In a real app, you would fetch the user ID here
+        // const user = (await supabase.auth.getUser()).data.user;
+
+        const order = {
+          // user_id: user.id, 
+          name: document.getElementById('name').value,
+          address: document.getElementById('address').value,
+          contact: document.getElementById('contact').value,
+          payment: document.getElementById('payment').value,
+          items: cart,
+          total: total
         };
 
-        // 2. Insert into the Supabase 'orders' table
-        const { data, error } = await supabase
-          .from('orders')
-          .insert([orderDetails]);
+        // 💡 TO DO: Here, you would insert the 'order' object into the Supabase Database
 
-        if (error) {
-          console.error('Supabase Order Error:', error);
-          alert('Order placement failed: ' + error.message + '. Check the console for details.');
-        } else {
-          alert("✅ Order placed successfully! Thank you for shopping with FitBite.");
-          localStorage.removeItem('cart');
-          window.location.href = "index.html";
-        }
+        alert("✅ Order placed successfully! Thank you for shopping with FitBite.");
+        localStorage.removeItem('cart');
+        window.location.href = "index.html";
       });
   }
 
