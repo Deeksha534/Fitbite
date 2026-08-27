@@ -102,8 +102,49 @@ const authorizeRoles = (...allowedRoles) => (req, res, next) => {
   next();
 };
 
+/**
+ * Optional authentication middleware.
+ * If Authorization Bearer header is present and valid, sets req.user.
+ * If missing or invalid, proceeds gracefully with req.user = null (allowing public access).
+ */
+const optionalAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    req.user = null;
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    req.user = null;
+    return next();
+  }
+
+  jwt.verify(token, secret, (err, decoded) => {
+    if (!err && decoded) {
+      req.user = {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role,
+      };
+    } else {
+      req.user = null;
+    }
+    next();
+  });
+};
+
 module.exports = {
   authenticateToken,
   requireAdmin,
   authorizeRoles,
+  optionalAuth,
 };
+
