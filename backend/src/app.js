@@ -6,8 +6,10 @@ const morgan = require('morgan');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
 const healthRoutes = require('./routes/healthRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
+
 
 // Security HTTP Headers
 app.use(helmet());
@@ -53,8 +55,10 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/v1/health', healthRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 // Catch-all 404 Route Handler
+
 app.use(notFound);
 
 // Centralized Error Handling Middleware

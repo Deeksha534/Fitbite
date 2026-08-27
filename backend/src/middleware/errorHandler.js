@@ -1,19 +1,25 @@
 /**
  * Centralized Error Handling Middleware
  * Ensures all API errors return consistent JSON responses.
- * Protects sensitive stack traces from leaking in production.
+ * Protects sensitive stack traces and credentials from leaking.
  */
 const errorHandler = (err, req, res, next) => {
-  // If status code was not previously set to an error status, default to 500
-  const statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+  let statusCode = err.statusCode || err.status || (res.statusCode && res.statusCode !== 200 ? res.statusCode : 500);
+  let message = err.message || 'Internal server error occurred';
+
+  // Handle PostgreSQL duplicate key constraint violation (Code 23505)
+  if (err.code === '23505') {
+    statusCode = 409;
+    message = 'A record with this information already exists';
+  }
 
   const response = {
     success: false,
-    message: err.message || 'Internal server error occurred',
+    message,
   };
 
-  // Include stack trace only in non-production environments
-  if (process.env.NODE_ENV !== 'production') {
+  // Include stack trace only in development environment
+  if (process.env.NODE_ENV === 'development') {
     response.stack = err.stack;
   }
 
@@ -21,3 +27,4 @@ const errorHandler = (err, req, res, next) => {
 };
 
 module.exports = errorHandler;
+
