@@ -11,8 +11,12 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
+const addressRoutes = require('./routes/addressRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+
 
 const app = express();
+
 
 
 
@@ -66,8 +70,11 @@ app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/cart', cartRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
+app.use('/api/v1/addresses', addressRoutes);
+app.use('/api/v1/orders', orderRoutes);
 
 // Catch-all 404 Route Handler
+
 
 
 
