@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- Migration: 001_create_extensions_and_helpers.sql
--- Description: Enables required PostgreSQL extensions and creates reusable
---              helper functions (updated_at trigger function and is_admin check).
+-- Description: Enables standard PostgreSQL extensions (uuid-ossp, pgcrypto)
+--              and creates the reusable updated_at timestamp trigger function.
 -- ==============================================================================
 
 -- Enable UUID extension for generating UUIDv4 primary keys
@@ -15,18 +15,4 @@ BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Helper function to check whether a given user has the 'admin' role in public.profiles
--- Used inside Row Level Security (RLS) policies and security-definer triggers
-CREATE OR REPLACE FUNCTION public.is_admin(check_user_id UUID DEFAULT auth.uid())
-RETURNS BOOLEAN AS $$
-BEGIN
-    RETURN EXISTS (
-        SELECT 1
-        FROM public.profiles
-        WHERE id = check_user_id
-          AND role = 'admin'
-    );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+$$ LANGUAGE plpgsql;

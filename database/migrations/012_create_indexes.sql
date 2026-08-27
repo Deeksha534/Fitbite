@@ -5,9 +5,11 @@
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
--- Profiles Indexes
+-- Users & Profiles Indexes
 -- ------------------------------------------------------------------------------
-CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles(role);
+CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
+CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
+CREATE INDEX IF NOT EXISTS idx_users_is_active ON public.users(is_active);
 
 -- ------------------------------------------------------------------------------
 -- Categories Indexes

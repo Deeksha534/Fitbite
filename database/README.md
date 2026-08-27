@@ -1,7 +1,7 @@
 # FitBite Database Architecture & Schema Documentation
 
-> **Database Engine:** PostgreSQL 15+ (Hosted via Supabase)  
-> **Schema Version:** 2.0.0 (Normalized Production Schema)  
+> **Database Engine:** Standard PostgreSQL 14+ (Provider-Independent)  
+> **Schema Version:** 2.1.0 (Standard PostgreSQL + Express REST Architecture)  
 > **Status:** Local Schema Definition & Migration Catalog (Phase 2)
 
 ---
@@ -10,12 +10,12 @@
 
 ```mermaid
 erDiagram
-    AUTH_USERS ||--o| PROFILES : "1:1 on auth.users(id)"
-    PROFILES ||--o{ ADDRESSES : "has many"
-    PROFILES ||--o| CARTS : "owns 1"
-    PROFILES ||--o| WISHLISTS : "owns 1"
-    PROFILES ||--o{ ORDERS : "places many"
-    PROFILES ||--o{ REVIEWS : "authors many"
+    USERS ||--o| PROFILES : "1:1 on users(id)"
+    USERS ||--o{ ADDRESSES : "has many"
+    USERS ||--o| CARTS : "owns 1"
+    USERS ||--o| WISHLISTS : "owns 1"
+    USERS ||--o{ ORDERS : "places many"
+    USERS ||--o{ REVIEWS : "authors many"
 
     CATEGORIES ||--o{ PRODUCTS : "categorizes"
     PRODUCTS ||--o{ PRODUCT_IMAGES : "has gallery"
@@ -30,21 +30,30 @@ erDiagram
     ORDERS ||--o{ ORDER_ITEMS : "contains"
     ADDRESSES ||--o{ ORDERS : "delivered to"
 
+    USERS {
+        uuid id PK
+        varchar email UK
+        varchar password_hash
+        varchar role "customer | admin"
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
     PROFILES {
-        uuid id PK "FK auth.users"
-        text email UK
-        text full_name
-        text phone
-        text role "customer | admin"
+        uuid id PK "FK users(id)"
+        varchar full_name
+        varchar phone
         text avatar_url
+        text bio
         timestamptz created_at
         timestamptz updated_at
     }
 
     CATEGORIES {
         uuid id PK
-        text name UK
-        text slug UK
+        varchar name UK
+        varchar slug UK
         text description
         text image_url
         boolean is_active
@@ -55,13 +64,13 @@ erDiagram
     PRODUCTS {
         uuid id PK
         uuid category_id FK
-        text name
-        text slug UK
+        varchar name
+        varchar slug UK
         text description
         numeric price
         numeric compare_at_price
         integer stock_quantity
-        text flavor
+        varchar flavor
         numeric protein_grams
         numeric fiber_grams
         numeric sugar_grams
@@ -76,7 +85,7 @@ erDiagram
         uuid id PK
         uuid product_id FK
         text image_url
-        text alt_text
+        varchar alt_text
         integer display_order
         boolean is_primary
         timestamptz created_at
@@ -115,14 +124,14 @@ erDiagram
     ADDRESSES {
         uuid id PK
         uuid user_id FK
-        text full_name
-        text phone
+        varchar full_name
+        varchar phone
         text street_address
-        text apartment
-        text city
-        text state
-        text postal_code
-        text country
+        varchar apartment
+        varchar city
+        varchar state
+        varchar postal_code
+        varchar country
         boolean is_default
         timestamptz created_at
         timestamptz updated_at
@@ -130,7 +139,7 @@ erDiagram
 
     ORDERS {
         uuid id PK
-        text order_number UK
+        varchar order_number UK
         uuid user_id FK
         uuid shipping_address_id FK
         jsonb shipping_address_snapshot
@@ -138,10 +147,10 @@ erDiagram
         numeric shipping_fee
         numeric discount_amount
         numeric total_amount
-        text order_status
-        text payment_status
-        text payment_method
-        text payment_reference_id
+        varchar order_status
+        varchar payment_status
+        varchar payment_method
+        varchar payment_reference_id
         text delivery_notes
         timestamptz created_at
         timestamptz updated_at
@@ -151,8 +160,8 @@ erDiagram
         uuid id PK
         uuid order_id FK
         uuid product_id FK
-        text product_name_snapshot
-        text product_flavor_snapshot
+        varchar product_name_snapshot
+        varchar product_flavor_snapshot
         text product_image_snapshot
         numeric unit_price_snapshot
         integer quantity
@@ -165,7 +174,7 @@ erDiagram
         uuid product_id FK
         uuid user_id FK
         integer rating "1-5"
-        text title
+        varchar title
         text comment
         boolean is_verified_purchase
         timestamptz created_at
@@ -179,34 +188,35 @@ erDiagram
 
 | Table Name | Primary Key | Foreign Keys & Actions | Key Constraints |
 |---|---|---|---|
-| **`profiles`** | `id` (UUID) | `id -> auth.users(id)` `ON DELETE CASCADE` | `UNIQUE(email)`, `CHECK (role IN ('customer', 'admin'))` |
+| **`users`** | `id` (UUID) | None | `UNIQUE(email)`, `CHECK (role IN ('customer', 'admin'))`, `is_active` |
+| **`profiles`** | `id` (UUID) | `id -> users(id)` `ON DELETE CASCADE` | 1:1 user profile metadata |
 | **`categories`** | `id` (UUID) | None | `UNIQUE(name)`, `UNIQUE(slug)` |
 | **`products`** | `id` (UUID) | `category_id -> categories(id)` `ON DELETE SET NULL` | `UNIQUE(slug)`, `CHECK(price >= 0)`, `CHECK(compare_at_price >= price)`, `CHECK(stock_quantity >= 0)` |
 | **`product_images`** | `id` (UUID) | `product_id -> products(id)` `ON DELETE CASCADE` | None |
-| **`carts`** | `id` (UUID) | `user_id -> profiles(id)` `ON DELETE CASCADE` | `UNIQUE(user_id)` (1 cart per user) |
+| **`carts`** | `id` (UUID) | `user_id -> users(id)` `ON DELETE CASCADE` | `UNIQUE(user_id)` (1 cart per user) |
 | **`cart_items`** | `id` (UUID) | `cart_id -> carts(id)` `ON DELETE CASCADE`, `product_id -> products(id)` `ON DELETE CASCADE` | `UNIQUE(cart_id, product_id)`, `CHECK(quantity > 0)` |
-| **`wishlists`** | `id` (UUID) | `user_id -> profiles(id)` `ON DELETE CASCADE` | `UNIQUE(user_id)` (1 wishlist per user) |
+| **`wishlists`** | `id` (UUID) | `user_id -> users(id)` `ON DELETE CASCADE` | `UNIQUE(user_id)` (1 wishlist per user) |
 | **`wishlist_items`** | `id` (UUID) | `wishlist_id -> wishlists(id)` `ON DELETE CASCADE`, `product_id -> products(id)` `ON DELETE CASCADE` | `UNIQUE(wishlist_id, product_id)` |
-| **`addresses`** | `id` (UUID) | `user_id -> profiles(id)` `ON DELETE CASCADE` | Single default address enforced via trigger |
-| **`orders`** | `id` (UUID) | `user_id -> profiles(id)` `ON DELETE RESTRICT`, `shipping_address_id -> addresses(id)` `ON DELETE SET NULL` | `UNIQUE(order_number)`, `CHECK(order_status IN ('pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled'))`, `CHECK(payment_status IN ('unpaid', 'paid', 'failed', 'refunded'))`, `CHECK(payment_method IN ('cod', 'card', 'upi'))` |
+| **`addresses`** | `id` (UUID) | `user_id -> users(id)` `ON DELETE CASCADE` | Single default address enforced via trigger |
+| **`orders`** | `id` (UUID) | `user_id -> users(id)` `ON DELETE RESTRICT`, `shipping_address_id -> addresses(id)` `ON DELETE SET NULL` | `UNIQUE(order_number)`, `CHECK(order_status IN ('pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled'))`, `CHECK(payment_status IN ('unpaid', 'paid', 'failed', 'refunded'))`, `CHECK(payment_method IN ('cod', 'card', 'upi'))` |
 | **`order_items`** | `id` (UUID) | `order_id -> orders(id)` `ON DELETE CASCADE`, `product_id -> products(id)` `ON DELETE SET NULL` | `CHECK(quantity > 0)`, `CHECK(unit_price_snapshot >= 0)` |
-| **`reviews`** | `id` (UUID) | `product_id -> products(id)` `ON DELETE CASCADE`, `user_id -> profiles(id)` `ON DELETE CASCADE` | `UNIQUE(product_id, user_id)` (1 review per product per user), `CHECK(rating BETWEEN 1 AND 5)` |
+| **`reviews`** | `id` (UUID) | `product_id -> products(id)` `ON DELETE CASCADE`, `user_id -> users(id)` `ON DELETE CASCADE` | `UNIQUE(product_id, user_id)` (1 review per product per user), `CHECK(rating BETWEEN 1 AND 5)` |
 
 ---
 
-## 3. Historical Pricing & Snapshot Strategy
+## 3. Historical Pricing & Snapshot Architecture
 
-### Why Snapshot Columns are Critical in E-Commerce
-In a naive schema, order items join live against the `products` and `addresses` tables. This causes two severe real-world bugs:
-1. **Price Alteration Bug:** If an item is purchased for ₹120 and the store later increases the price to ₹150, re-rendering an old invoice dynamically from `products.price` would incorrectly claim the customer paid ₹150.
-2. **Product Deletion/Renaming Bug:** If a flavor is renamed or discontinued, old receipts break or become unreadable.
-3. **Address Drift:** If a customer moves and updates their profile address, past deliveries would show the wrong historical destination.
+### Why Snapshot Columns are Essential in E-Commerce
+In a naive schema, order items join live against the `products` and `addresses` tables. This causes critical business errors:
+1. **Price Alteration Bug:** If an item is purchased for ₹120 and the store later increases the price to ₹150, re-rendering an old receipt dynamically from `products.price` would incorrectly display ₹150.
+2. **Product Deletion/Renaming Bug:** If a flavor is renamed or discontinued, old invoices break or become unreadable.
+3. **Address Drift:** If a customer moves and updates their saved address, past deliveries would show the wrong historical destination.
 
 ### FitBite Snapshot Implementation
 - **`orders.shipping_address_snapshot` (`jsonb`):** Freezes the exact full name, phone number, street address, city, state, and postal code at the instant of order placement.
 - **`order_items.unit_price_snapshot` (`numeric`):** Freezes the exact unit cost paid.
-- **`order_items.product_name_snapshot` (`text`):** Freezes the exact product title.
-- **`order_items.product_flavor_snapshot` (`text`):** Freezes the exact flavor variation.
+- **`order_items.product_name_snapshot` (`varchar`):** Freezes the exact product title.
+- **`order_items.product_flavor_snapshot` (`varchar`):** Freezes the exact flavor variation.
 - **`order_items.product_image_snapshot` (`text`):** Freezes the product thumbnail for customer invoice rendering.
 
 ---
@@ -233,46 +243,42 @@ stateDiagram-v2
 
 ---
 
-## 5. Security & Row Level Security (RLS) Policy Guide
+## 5. Security & Authorization Architecture
 
-### 5.1 RBAC Enforcement
-- Roles are defined as `customer` (default) and `admin`.
-- The `profiles` table has a `BEFORE UPDATE OF role` trigger (`prevent_role_escalation`) that rejects any attempt by a non-admin client to elevate their own role.
-- Helper function `public.is_admin()` checks admin status inside PostgreSQL with `SECURITY DEFINER` privileges.
+### Standard Backend Authentication & Authorization Model
+Rather than relying on proprietary database-level RLS, authorization is enforced in the **Node.js / Express** application layer:
 
-### 5.2 RLS Policy Overview
-
-| Table | Public Access | Customer Access | Admin Access |
-|---|---|---|---|
-| `profiles` | None | Read / Update own profile (`auth.uid() = id`) | Read / Update all profiles |
-| `categories` | Read Active (`is_active = true`) | Read Active | Full CRUD |
-| `products` | Read Active (`is_active = true`) | Read Active | Full CRUD |
-| `product_images` | Read All | Read All | Full CRUD |
-| `carts` & `cart_items` | None | Full CRUD for own cart (`user_id = auth.uid()`) | Full Access |
-| `wishlists` & `items` | None | Full CRUD for own wishlist (`user_id = auth.uid()`) | Full Access |
-| `addresses` | None | Full CRUD for own addresses (`user_id = auth.uid()`) | Full Access |
-| `orders` & `items` | None | Read own orders; Cancel if `pending` | Full CRUD across all store orders |
-| `reviews` | Read All | Create / Update / Delete own reviews | Moderate / Delete any review |
+```
+Incoming Request
+      ↓
+authenticateToken Middleware (Verifies JWT via JWT_SECRET)
+      ↓ (Sets req.user = { id, email, role })
+requireAdmin Middleware (If route is admin-only; checks role === 'admin')
+      ↓
+Controller / Service Layer (Queries PostgreSQL with Parameterized SQL)
+      ↓
+PostgreSQL Returns Authoritative Data
+```
 
 ---
 
 ## 6. Migration Execution Order
 
-When applying migrations in Supabase or a local PostgreSQL instance, execute the files in sequential numerical order:
+When running migrations against standard PostgreSQL, execute files in sequential numerical order:
 
 ```text
 database/migrations/
-├── 001_create_extensions_and_helpers.sql   # uuid-ossp, pgcrypto, set_updated_at(), is_admin()
-├── 002_create_profiles.sql                 # profiles linked to auth.users
-├── 003_create_categories.sql               # categories
-├── 004_create_products_and_images.sql      # products & product_images
-├── 005_create_carts_and_items.sql          # carts & cart_items
-├── 006_create_wishlists_and_items.sql      # wishlists & wishlist_items
-├── 007_create_addresses.sql                # customer shipping addresses
-├── 008_create_orders_and_items.sql         # orders & immutable order_items
-├── 009_create_reviews.sql                  # customer reviews & ratings
-├── 010_create_triggers.sql                 # auto-profile on signup, address default handler
-├── 011_create_rls_policies.sql             # Row Level Security policies
+├── 001_create_extensions_and_helpers.sql   # uuid-ossp, pgcrypto, set_updated_at()
+├── 002_create_users.sql                    # users authentication credentials table
+├── 003_create_profiles.sql                 # profiles linked to users(id)
+├── 004_create_categories.sql               # categories
+├── 005_create_products_and_images.sql      # products & product_images
+├── 006_create_carts_and_items.sql          # carts & cart_items
+├── 007_create_wishlists_and_items.sql      # wishlists & wishlist_items
+├── 008_create_addresses.sql                # customer shipping addresses
+├── 009_create_orders_and_items.sql         # orders & immutable order_items
+├── 010_create_reviews.sql                  # customer reviews & ratings
+├── 011_create_triggers.sql                 # default address handler, updated_at maintenance
 └── 012_create_indexes.sql                  # Performance B-tree indexes
 ```
 
@@ -282,22 +288,8 @@ database/migrations/
 database/seed/
 ├── 001_seed_categories.sql                 # Core product categories
 ├── 002_seed_products.sql                   # 4 core bars + Summer Starter Pack + images
-└── 003_seed_sample_data.sql                # Initial reviews & admin elevation guide
+└── 003_seed_sample_data.sql                # Dev test users (admin + customer) & reviews
 ```
-
----
-
-## 7. Compatibility with Existing Legacy Database
-
-### Comparison of Legacy vs. New Architecture
-
-| Dimension | Legacy Prototype | New Normalized Schema | Migration / Compatibility Action |
-|---|---|---|---|
-| **Orders Storage** | Single `orders` table storing `items` as raw `jsonb` | Normalized `orders` + `order_items` tables | New checkout will write normalized records. Legacy JSONB orders can be queried or migrated with an adapter script. |
-| **Address Storage** | Raw string inside `orders.delivery_address` | Normalized `addresses` table + `shipping_address_snapshot` (`jsonb`) | New checkout saves user addresses and generates the frozen snapshot automatically. |
-| **Product Source** | Hardcoded in `index.html` and `product.html` | Relational `products` & `categories` tables | Seeded with exact legacy product names, macros, flavors, and pricing in `002_seed_products.sql`. |
-| **Cart & Wishlist** | `localStorage` strings on individual browsers | Relational `carts`, `cart_items`, `wishlists`, `wishlist_items` | Seamless DB sync with guest fallback. |
-| **User Roles** | No roles (all users identical) | `profiles.role` (`customer`, `admin`) with RLS enforcement | `010_create_triggers.sql` defaults new signups to `customer`; admin can be assigned via SQL. |
 
 ---
 

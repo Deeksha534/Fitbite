@@ -1,11 +1,11 @@
 -- ==============================================================================
--- Migration: 006_create_wishlists_and_items.sql
+-- Migration: 007_create_wishlists_and_items.sql
 -- Description: Creates wishlists and wishlist_items tables for saved products.
 -- ==============================================================================
 
 CREATE TABLE IF NOT EXISTS public.wishlists (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL UNIQUE REFERENCES public.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

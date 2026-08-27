@@ -1,12 +1,12 @@
 -- ==============================================================================
--- Migration: 005_create_carts_and_items.sql
+-- Migration: 006_create_carts_and_items.sql
 -- Description: Creates persistent database-backed carts and cart_items tables
---              for authenticated users, replacing pure localStorage storage.
+--              for authenticated users in standard PostgreSQL.
 -- ==============================================================================
 
 CREATE TABLE IF NOT EXISTS public.carts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL UNIQUE REFERENCES public.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -23,4 +23,4 @@ CREATE TABLE IF NOT EXISTS public.cart_items (
     CONSTRAINT uq_cart_product UNIQUE (cart_id, product_id)
 );
 
-COMMENT ON TABLE public.cart_items IS 'Line items within a user shopping cart with unique product constraints.';
+COMMENT ON TABLE public.cart_items IS 'Line items within a shopping cart with unique product constraints.';
