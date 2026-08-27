@@ -1,8 +1,11 @@
 require('dotenv').config();
+const http = require('http');
 const { spawn } = require('child_process');
+const app = require('./src/app');
 const { pool, query } = require('./src/config/database');
 
-const API_BASE = process.env.API_URL || 'http://localhost:5000';
+let API_BASE = process.env.API_URL || 'http://localhost:5000';
+let localServer = null;
 
 const results = [];
 
@@ -59,12 +62,28 @@ const testJwtSecretMissingStartup = () => {
   });
 };
 
-
 async function runVerification() {
   console.log('====================================================');
   console.log(`🧪 FitBite Phase 3B Authentication & Authorization Verification`);
+
+  try {
+    const probe = await fetch(`${API_BASE}/api/v1/health`);
+    if (probe.status === 404 || probe.status === 503) {
+      localServer = http.createServer(app);
+      await new Promise((resolve) => localServer.listen(0, resolve));
+      const dynamicPort = localServer.address().port;
+      API_BASE = `http://localhost:${dynamicPort}`;
+    }
+  } catch (e) {
+    localServer = http.createServer(app);
+    await new Promise((resolve) => localServer.listen(0, resolve));
+    const dynamicPort = localServer.address().port;
+    API_BASE = `http://localhost:${dynamicPort}`;
+  }
+
   console.log(`🌐 Target Server: ${API_BASE}`);
   console.log('====================================================\n');
+
 
   const uniqueId = Date.now();
   const testEmail = `test_auth_${uniqueId}@fitbite.test`;
@@ -303,8 +322,12 @@ async function runVerification() {
       await query('DELETE FROM public.users WHERE email = $1', [testEmail]);
       console.log('\n🧹 Temporary test user and associated records cleaned up from PostgreSQL.');
     }
+    if (localServer) {
+      await new Promise((resolve) => localServer.close(resolve));
+    }
     await pool.end();
   }
+
 
   // --------------------------------------------------------------------------
   // SUMMARY REPORT
