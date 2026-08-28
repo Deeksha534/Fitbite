@@ -116,10 +116,73 @@ const createOrderFromCart = async (userId, payload) => {
     for (const item of cartRes.rows) {
       subtotal += Number(item.price) * item.quantity;
     }
+    subtotal = Number(subtotal.toFixed(2));
 
     const shippingFee = subtotal >= 500 || subtotal === 0 ? 0 : 50;
-    const discountAmount = 0;
-    const totalAmount = subtotal + shippingFee - discountAmount;
+    let discountAmount = 0;
+    let appliedCouponId = null;
+
+    if (payload.coupon_code && payload.coupon_code.trim().length > 0) {
+      const normalizedCode = payload.coupon_code.trim().toUpperCase();
+      const couponRes = await client.query(
+        `SELECT id, code, discount_type, discount_value, min_order_amount,
+                max_discount_amount, usage_limit, used_count, is_active, starts_at, expires_at
+         FROM public.coupons
+         WHERE UPPER(code) = $1
+         FOR UPDATE`,
+        [normalizedCode]
+      );
+
+      if (couponRes.rows.length === 0 || !couponRes.rows[0].is_active) {
+        const err = new Error(`Coupon '${normalizedCode}' is invalid or inactive`);
+        err.statusCode = 400;
+        throw err;
+      }
+
+      const coupon = couponRes.rows[0];
+      const now = new Date();
+
+      if (coupon.starts_at && new Date(coupon.starts_at) > now) {
+        const err = new Error(`Coupon '${normalizedCode}' is not yet active`);
+        err.statusCode = 400;
+        throw err;
+      }
+
+      if (coupon.expires_at && new Date(coupon.expires_at) < now) {
+        const err = new Error(`Coupon '${normalizedCode}' has expired`);
+        err.statusCode = 400;
+        throw err;
+      }
+
+      if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
+        const err = new Error(`Coupon '${normalizedCode}' usage limit has been reached`);
+        err.statusCode = 400;
+        throw err;
+      }
+
+      const minOrder = Number(coupon.min_order_amount || 0);
+      if (subtotal < minOrder) {
+        const err = new Error(
+          `Minimum order subtotal of ₹${minOrder.toFixed(2)} required for coupon '${normalizedCode}'`
+        );
+        err.statusCode = 400;
+        throw err;
+      }
+
+      if (coupon.discount_type === 'percentage') {
+        const rawDiscount = (subtotal * Number(coupon.discount_value)) / 100;
+        discountAmount = coupon.max_discount_amount
+          ? Math.min(rawDiscount, Number(coupon.max_discount_amount))
+          : rawDiscount;
+      } else if (coupon.discount_type === 'fixed') {
+        discountAmount = Math.min(Number(coupon.discount_value), subtotal);
+      }
+
+      discountAmount = Number(discountAmount.toFixed(2));
+      appliedCouponId = coupon.id;
+    }
+
+    const totalAmount = Number(Math.max(0, subtotal + shippingFee - discountAmount).toFixed(2));
 
     // 5. Generate unique order number
     let orderNumber = generateOrderNumber();
@@ -171,6 +234,16 @@ const createOrderFromCart = async (userId, payload) => {
     const orderRes = await client.query(orderInsertSql, orderInsertParams);
     const createdOrder = orderRes.rows[0];
 
+    // Atomically increment coupon usage counter if coupon was applied
+    if (appliedCouponId) {
+      await client.query(
+        `UPDATE public.coupons
+         SET used_count = used_count + 1, updated_at = NOW()
+         WHERE id = $1`,
+        [appliedCouponId]
+      );
+    }
+
     // 7. Insert Order Items & Decrement Inventory Atomically
     const createdItems = [];
     for (const item of cartRes.rows) {
@@ -184,7 +257,7 @@ const createOrderFromCart = async (userId, payload) => {
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING id, order_id, product_id, product_name_snapshot, product_flavor_snapshot,
-                  product_image_snapshot, unit_price_snapshot, quantity, total_price, created_at;
+                  product_image_snapshot, unit_price_snapshot, quantity, total_price;
       `;
 
       const itemInsertParams = [

@@ -1,5 +1,7 @@
 const express = require('express');
 const orderController = require('../controllers/orderController');
+const paymentController = require('../controllers/paymentController');
+const trackingController = require('../controllers/trackingController');
 const {
   validate,
   validateQuery,
@@ -7,12 +9,24 @@ const {
   updateOrderStatusSchema,
   orderQuerySchema,
 } = require('../validators/orderValidator');
+const { paymentVerifySchema } = require('../validators/paymentValidator');
 const { validateUUID } = require('../validators/paramValidator');
-const { authenticateToken, requireAdmin } = require('../middleware/authMiddleware');
+const { authenticateToken, requireAdmin, optionalAuth } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Enforce authentication for all order routes
+// ============================================================================
+// PUBLIC ORDER TRACKING TIMELINE ROUTE
+// ============================================================================
+
+/**
+ * @route   GET /api/v1/orders/track/:orderNumber
+ * @desc    Get real-time 5-stage order tracking progress timeline with privacy masking
+ * @access  Public (Optional Authentication)
+ */
+router.get('/track/:orderNumber', optionalAuth, trackingController.getTracking);
+
+// Enforce authentication for all remaining customer and admin order routes
 router.use(authenticateToken);
 
 // ============================================================================
@@ -63,6 +77,25 @@ router.post('/', validate(createOrderSchema), orderController.checkout);
 router.get('/', validateQuery(orderQuerySchema), orderController.getMyOrders);
 
 /**
+ * @route   POST /api/v1/orders/:id/payment
+ * @desc    Submit payment verification details and mark order paid/confirmed
+ * @access  Private (Owner or Admin)
+ */
+router.post(
+  '/:id/payment',
+  validateUUID('id'),
+  validate(paymentVerifySchema),
+  paymentController.verifyPayment
+);
+
+/**
+ * @route   GET /api/v1/orders/:id/invoice
+ * @desc    Generate structured commercial tax invoice for an order
+ * @access  Private (Owner or Admin)
+ */
+router.get('/:id/invoice', validateUUID('id'), paymentController.getInvoice);
+
+/**
  * @route   GET /api/v1/orders/:id
  * @desc    Get order details by UUID or order_number
  * @access  Private (Owner or Admin)
@@ -77,3 +110,4 @@ router.get('/:id', orderController.getOrderDetails);
 router.post('/:id/cancel', orderController.cancelMyOrder);
 
 module.exports = router;
+

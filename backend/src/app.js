@@ -17,6 +17,10 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const contentRoutes = require('./routes/contentRoutes');
+const couponRoutes = require('./routes/couponRoutes');
+const newsletterRoutes = require('./routes/newsletterRoutes');
+const supportRoutes = require('./routes/supportRoutes');
+const { authLimiter, checkoutLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
@@ -62,19 +66,22 @@ app.get('/', (req, res) => {
   });
 });
 
-// API Routes
+// API Routes with Rate Limiting Protections
 app.use('/api/v1/health', healthRoutes);
-app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/auth', authLimiter, authRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/cart', cartRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
 app.use('/api/v1/addresses', addressRoutes);
-app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/orders', checkoutLimiter, orderRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/coupons', couponRoutes);
+app.use('/api/v1/newsletter', newsletterRoutes);
+app.use('/api/v1/support', supportRoutes);
 
 // Catch-all 404 Route Handler
 

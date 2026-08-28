@@ -33,6 +33,12 @@ const createOrderSchema = Joi.object({
     .max(255)
     .allow('', null)
     .optional(),
+  coupon_code: Joi.string()
+    .trim()
+    .uppercase()
+    .max(50)
+    .allow('', null)
+    .optional(),
   delivery_notes: Joi.string()
     .trim()
     .max(500)
