@@ -6,6 +6,13 @@ import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/public/HomePage';
 import NotFoundPage from './pages/public/NotFoundPage';
 import PlaceholderPage from './pages/public/PlaceholderPage';
+import ProductsPage from './pages/public/ProductsPage';
+import ProductDetailPage from './pages/public/ProductDetailPage';
+import NutritionPage from './pages/public/NutritionPage';
+import RecipesPage from './pages/public/RecipesPage';
+import FitnessTipsPage from './pages/public/FitnessTipsPage';
+import FAQPage from './pages/public/FAQPage';
+import SupportPage from './pages/public/SupportPage';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ProfilePage from './pages/account/ProfilePage';
@@ -23,76 +30,13 @@ export const App = () => {
             <Route path="/" element={<MainLayout />}>
               {/* Public Routes */}
               <Route index element={<HomePage />} />
-              <Route
-                path="products"
-                element={
-                  <PlaceholderPage
-                    title="Product Catalog & Filtering"
-                    subtitle="Browse all protein bars with real-time search debounce, category selection, and flavor filters."
-                    phase="4C"
-                  />
-                }
-              />
-              <Route
-                path="products/:id"
-                element={
-                  <PlaceholderPage
-                    title="Product Details & Nutrition Breakdown"
-                    subtitle="Detailed macro nutrition breakdown, image gallery, customer ratings, and quantity selector."
-                    phase="4C"
-                  />
-                }
-              />
-              <Route
-                path="nutrition"
-                element={
-                  <PlaceholderPage
-                    title="Nutrition Guide & Macro Targets"
-                    subtitle="Science-backed nutrition formulas, daily protein intake standards, and clean fuel recommendations."
-                    phase="4C"
-                  />
-                }
-              />
-              <Route
-                path="recipes"
-                element={
-                  <PlaceholderPage
-                    title="Gourmet High-Protein Recipes"
-                    subtitle="Delicious healthy snack recipes, protein smoothies, and meal prep guides using FitBite bars."
-                    phase="4C"
-                  />
-                }
-              />
-              <Route
-                path="fitness-tips"
-                element={
-                  <PlaceholderPage
-                    title="Fitness & Muscle Recovery Advice"
-                    subtitle="Expert articles on athletic conditioning, pre/post workout nutrition, and hydration science."
-                    phase="4C"
-                  />
-                }
-              />
-              <Route
-                path="faq"
-                element={
-                  <PlaceholderPage
-                    title="Frequently Asked Questions"
-                    subtitle="Instant answers regarding shipping, ingredients, allergies, subscriptions, and order policies."
-                    phase="4C"
-                  />
-                }
-              />
-              <Route
-                path="support"
-                element={
-                  <PlaceholderPage
-                    title="Customer Support & Contact Center"
-                    subtitle="Submit inquiries directly to our nutrition desk with automated ticket tracking IDs."
-                    phase="4C"
-                  />
-                }
-              />
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="products/:id" element={<ProductDetailPage />} />
+              <Route path="nutrition" element={<NutritionPage />} />
+              <Route path="recipes" element={<RecipesPage />} />
+              <Route path="fitness-tips" element={<FitnessTipsPage />} />
+              <Route path="faq" element={<FAQPage />} />
+              <Route path="support" element={<SupportPage />} />
               <Route
                 path="cart"
                 element={

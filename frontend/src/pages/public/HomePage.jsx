@@ -1,23 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, ShieldCheck, Zap, Heart, ShoppingBag, CheckCircle, Activity } from 'lucide-react';
+import {
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  Heart,
+  ShoppingBag,
+  CheckCircle,
+  Activity,
+  MessageSquare,
+  Award,
+} from 'lucide-react';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
 import RatingStars from '../../components/common/RatingStars';
+import ProductCard from '../../components/catalog/ProductCard';
+import Spinner from '../../components/common/Spinner';
 import { api } from '../../services/api';
-import { useToast } from '../../context/ToastContext';
+import { catalogService } from '../../services/catalogService';
 
 /**
- * FitBite Phase 4A Showcase Landing Page
- * Demonstrates layout components, design tokens, button variants, and backend API integration.
+ * FitBite Home & Brand Showcase Landing Page
+ * Connects live catalog APIs, featured products, real customer testimonials, and backend health status.
  */
 export const HomePage = () => {
   const [healthData, setHealthData] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
-  const toast = useToast();
+
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const [featuredReviews, setFeaturedReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
 
   useEffect(() => {
+    // 1. Fetch Backend Health Status
     const fetchHealth = async () => {
       try {
         setLoadingHealth(true);
@@ -30,7 +49,41 @@ export const HomePage = () => {
       }
     };
 
+    // 2. Fetch Live Featured Products
+    const fetchFeaturedProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        const data = await catalogService.getProducts({ is_featured: true, limit: 4 });
+        if (data.products && data.products.length > 0) {
+          setFeaturedProducts(data.products);
+        } else {
+          // Fallback to top 4 products
+          const fallbackData = await catalogService.getProducts({ limit: 4 });
+          setFeaturedProducts(fallbackData.products || []);
+        }
+      } catch (err) {
+        console.warn('Failed to load featured products for home page:', err);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    // 3. Fetch Real Featured Customer Testimonials
+    const fetchReviews = async () => {
+      try {
+        setLoadingReviews(true);
+        const reviews = await catalogService.getFeaturedReviews(3);
+        setFeaturedReviews(reviews || []);
+      } catch (err) {
+        console.warn('Failed to load featured reviews for home page:', err);
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
     fetchHealth();
+    fetchFeaturedProducts();
+    fetchReviews();
   }, []);
 
   return (
@@ -152,90 +205,81 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* 3. Flavors Preview Grid */}
+      {/* 3. Live Signature Flavors Grid (Backend Powered) */}
       <section className="section flavors-section">
         <div className="container">
           <div className="section-header">
             <span className="section-subtitle">Our Signature Flavors</span>
-            <h2 className="section-title">Delicious Gourmet Flavors</h2>
+            <h2 className="section-title">Featured Gourmet Protein Bars</h2>
             <p className="section-desc">Hand-crafted artisan recipes made with real roasted nuts and dark cocoa.</p>
           </div>
 
-          <div className="grid-products">
-            <Card hoverable padding="none" className="product-preview-card">
-              <div className="product-img-wrap">
-                <img src="/images/choco-almond.jpeg" alt="Chocolate Almond Crunch" />
-                <Badge variant="espresso" size="sm" className="product-badge">Top Seller</Badge>
-              </div>
-              <div className="product-content">
-                <div className="product-meta">
-                  <RatingStars rating={4.9} showScore size="sm" />
-                  <Badge variant="primary" size="sm">20g Protein</Badge>
-                </div>
-                <h4 className="product-title">Chocolate Almond Crunch</h4>
-                <p className="product-price">₹150.00 <span className="mrp-price">₹180.00</span></p>
-                <Button variant="primary" size="sm" fullWidth leftIcon={<ShoppingBag size={14} />}>
-                  View Details
-                </Button>
-              </div>
-            </Card>
+          {loadingProducts ? (
+            <Spinner centered size="lg" label="Loading featured flavors from catalog..." />
+          ) : (
+            <div className="grid-products">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
 
-            <Card hoverable padding="none" className="product-preview-card">
-              <div className="product-img-wrap">
-                <img src="/images/peanut-fudge.jpeg" alt="Peanut Butter Fudge" />
-                <Badge variant="warning" size="sm" className="product-badge">Creamy</Badge>
-              </div>
-              <div className="product-content">
-                <div className="product-meta">
-                  <RatingStars rating={4.8} showScore size="sm" />
-                  <Badge variant="primary" size="sm">21g Protein</Badge>
-                </div>
-                <h4 className="product-title">Peanut Butter Fudge</h4>
-                <p className="product-price">₹150.00 <span className="mrp-price">₹180.00</span></p>
-                <Button variant="primary" size="sm" fullWidth leftIcon={<ShoppingBag size={14} />}>
-                  View Details
-                </Button>
-              </div>
-            </Card>
-
-            <Card hoverable padding="none" className="product-preview-card">
-              <div className="product-img-wrap">
-                <img src="/images/berry-blast.jpeg" alt="Wild Berry Antioxidant" />
-                <Badge variant="danger" size="sm" className="product-badge">Antioxidant</Badge>
-              </div>
-              <div className="product-content">
-                <div className="product-meta">
-                  <RatingStars rating={4.7} showScore size="sm" />
-                  <Badge variant="primary" size="sm">19g Protein</Badge>
-                </div>
-                <h4 className="product-title">Wild Berry Blast</h4>
-                <p className="product-price">₹150.00 <span className="mrp-price">₹180.00</span></p>
-                <Button variant="primary" size="sm" fullWidth leftIcon={<ShoppingBag size={14} />}>
-                  View Details
-                </Button>
-              </div>
-            </Card>
-
-            <Card hoverable padding="none" className="product-preview-card">
-              <div className="product-img-wrap">
-                <img src="/images/caramel-coffee.jpeg" alt="Caramel Macchiato" />
-                <Badge variant="espresso" size="sm" className="product-badge">Coffee Infused</Badge>
-              </div>
-              <div className="product-content">
-                <div className="product-meta">
-                  <RatingStars rating={4.9} showScore size="sm" />
-                  <Badge variant="primary" size="sm">20g Protein</Badge>
-                </div>
-                <h4 className="product-title">Caramel Macchiato</h4>
-                <p className="product-price">₹160.00 <span className="mrp-price">₹190.00</span></p>
-                <Button variant="primary" size="sm" fullWidth leftIcon={<ShoppingBag size={14} />}>
-                  View Details
-                </Button>
-              </div>
-            </Card>
+          <div className="view-all-cta">
+            <Link to="/products">
+              <Button variant="secondary" size="lg" rightIcon={<ArrowRight size={18} />}>
+                View Full Product Catalog
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
+
+      {/* 4. Real Customer Testimonials Section */}
+      {featuredReviews.length > 0 && (
+        <section className="section testimonials-section">
+          <div className="container">
+            <div className="section-header">
+              <span className="section-subtitle">Athlete Testimonials</span>
+              <h2 className="section-title">Verified Athlete Reviews</h2>
+              <p className="section-desc">Real stories from athletes, runners, and fitness enthusiasts.</p>
+            </div>
+
+            <div className="testimonials-grid">
+              {featuredReviews.map((rev) => (
+                <Card key={rev.id} hoverable padding="lg" className="testimonial-card">
+                  <div className="testimonial-header">
+                    <RatingStars rating={rev.rating || 5} size="sm" />
+                    {rev.is_verified_purchase && (
+                      <Badge variant="success" size="sm">
+                        <ShieldCheck size={12} /> Verified Buyer
+                      </Badge>
+                    )}
+                  </div>
+
+                  {rev.title && <h4 className="testimonial-title">"{rev.title}"</h4>}
+                  <p className="testimonial-comment">{rev.comment}</p>
+
+                  <div className="testimonial-author">
+                    <div className="author-avatar">
+                      {rev.user_avatar ? (
+                        <img src={rev.user_avatar} alt={rev.user_name} />
+                      ) : (
+                        <span>{rev.user_name ? rev.user_name.charAt(0).toUpperCase() : 'A'}</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="author-name">{rev.user_name || 'Verified Athlete'}</span>
+                      {rev.product_name && (
+                        <span className="author-product">Reviewed {rev.product_name}</span>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <style>{`
         .home-showcase-page {
@@ -444,74 +488,114 @@ export const HomePage = () => {
           flex: 1;
         }
 
-        /* --- Product Previews --- */
-        .product-preview-card {
-          display: flex;
-          flex-direction: column;
+        /* --- Flavors Section --- */
+        .grid-products {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: var(--space-6);
         }
 
-        .product-img-wrap {
-          position: relative;
-          width: 100%;
-          padding-top: 75%;
+        @media (min-width: 640px) {
+          .grid-products {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .grid-products {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        .view-all-cta {
+          display: flex;
+          justify-content: center;
+          margin-top: var(--space-10);
+        }
+
+        /* --- Testimonials Section --- */
+        .testimonials-section {
           background: var(--color-cream-subtle);
-          overflow: hidden;
+          border-top: 1px solid var(--color-border);
         }
 
-        .product-img-wrap img {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform var(--transition-normal);
+        .testimonials-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: var(--space-6);
         }
 
-        .product-preview-card:hover .product-img-wrap img {
-          transform: scale(1.06);
+        @media (min-width: 768px) {
+          .testimonials-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
 
-        .product-badge {
-          position: absolute;
-          top: var(--space-3);
-          left: var(--space-3);
-        }
-
-        .product-content {
-          padding: var(--space-4);
+        .testimonial-card {
           display: flex;
           flex-direction: column;
-          gap: var(--space-2);
-          flex: 1;
+          gap: var(--space-3);
+          height: 100%;
         }
 
-        .product-meta {
+        .testimonial-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .product-title {
-          font-size: var(--font-size-base);
+        .testimonial-title {
+          font-size: var(--font-size-sm);
           font-weight: var(--font-weight-bold);
           color: var(--color-espresso);
         }
 
-        .product-price {
-          font-family: var(--font-heading);
-          font-size: var(--font-size-md);
-          font-weight: var(--font-weight-bold);
-          color: var(--color-primary-dark);
-          margin-bottom: var(--space-2);
+        .testimonial-comment {
+          font-size: var(--font-size-xs);
+          color: var(--color-text-muted);
+          line-height: var(--line-height-relaxed);
+          flex: 1;
         }
 
-        .mrp-price {
+        .testimonial-author {
+          display: flex;
+          align-items: center;
+          gap: var(--space-3);
+          padding-top: var(--space-3);
+          border-top: 1px solid var(--color-border-subtle);
+        }
+
+        .author-avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: var(--radius-full);
+          background: var(--color-primary-light);
+          color: var(--color-primary-dark);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: var(--font-weight-bold);
+          font-size: var(--font-size-sm);
+        }
+
+        .author-avatar img {
+          width: 100%;
+          height: 100%;
+          border-radius: var(--radius-full);
+          object-fit: cover;
+        }
+
+        .author-name {
+          display: block;
           font-size: var(--font-size-xs);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-espresso);
+        }
+
+        .author-product {
+          display: block;
+          font-size: 0.65rem;
           color: var(--color-text-subtle);
-          text-decoration: line-through;
-          font-weight: var(--font-weight-regular);
-          margin-left: var(--space-1);
         }
       `}</style>
     </div>
