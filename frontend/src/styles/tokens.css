@@ -1,0 +1,147 @@
+/**
+ * FitBite CSS Design Tokens
+ * Defines the core color palette, typography, spacing, elevations,
+ * glassmorphic effects, and motion parameters for the application.
+ */
+
+:root {
+  /* --- Brand Core Palette --- */
+  --color-primary: #c87a3e;            /* Signature Caramel Amber */
+  --color-primary-hover: #b36b32;      /* Rich Deep Caramel */
+  --color-primary-light: #fbeee3;      /* Caramel Cream Tint */
+  --color-primary-subtle: #f5e4d5;     /* Soft Amber Glow */
+  --color-primary-dark: #8c4a1b;       /* Roasted Coffee Caramel */
+
+  --color-espresso: #1e120d;           /* Deep Chocolate Espresso */
+  --color-espresso-light: #2c1810;     /* Warm Dark Roast */
+  --color-espresso-dark: #120a07;      /* Pure Espresso Obsidian */
+
+  --color-amber: #d97706;              /* Energetic Amber Accent */
+  --color-amber-light: #fef3c7;        /* Soft Amber Tint */
+  --color-amber-dark: #b45309;         /* Dark Amber */
+
+  --color-cream: #fdfbf7;              /* Base Canvas Warm Neutral */
+  --color-cream-subtle: #f7f3eb;       /* Card Surface Warm Cream */
+  --color-cream-dark: #ede5d8;         /* Defined Card Border Neutral */
+
+  /* --- Semantic Status Accents --- */
+  --color-success: #15803d;            /* Forest Green (Healthy / Active) */
+  --color-success-bg: #dcfce7;
+  --color-success-border: #86efac;
+
+  --color-danger: #dc2626;             /* Crimson Red (Alert / Out of Stock) */
+  --color-danger-bg: #fee2e2;
+  --color-danger-border: #fca5a5;
+
+  --color-warning: #d97706;            /* Warning Gold */
+  --color-warning-bg: #fef3c7;
+  --color-warning-border: #fcd34d;
+
+  --color-info: #2563eb;               /* Deep Mineral Blue */
+  --color-info-bg: #dbeafe;
+  --color-info-border: #93c5fd;
+
+  /* --- Surface & Typography Colors --- */
+  --color-text-main: #1e120d;          /* Primary Body Text */
+  --color-text-muted: #6b584e;        /* Secondary Caption Text */
+  --color-text-subtle: #9c8a80;       /* Form Placeholder & Timestamps */
+  --color-text-inverse: #ffffff;      /* Contrast Text on Dark Surfaces */
+
+  --color-bg-main: #fdfbf7;            /* App Background */
+  --color-bg-card: #ffffff;            /* Card Background */
+  --color-bg-alt: #f7f3eb;             /* Alternate Section Background */
+  --color-bg-dark: #1e120d;            /* Dark Hero & Footer Canvas */
+
+  --color-border: #e6ded6;            /* Structural Borders */
+  --color-border-subtle: #f0ebe4;     /* Soft Divider Lines */
+  --color-border-focus: #c87a3e;      /* Active Input Highlight */
+
+  /* --- Typography --- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Poppins', var(--font-sans);
+
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-md: 1.125rem;    /* 18px */
+  --font-size-lg: 1.25rem;     /* 20px */
+  --font-size-xl: 1.5rem;      /* 24px */
+  --font-size-2xl: 1.875rem;   /* 30px */
+  --font-size-3xl: 2.25rem;    /* 36px */
+  --font-size-4xl: 3rem;       /* 48px */
+  --font-size-5xl: 3.75rem;    /* 60px */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* --- Spacing Scale --- */
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* --- Border Radius Scale --- */
+  --radius-xs: 0.25rem;   /* 4px */
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;  /* Pills & Avatars */
+
+  /* --- Elevation Shadows --- */
+  --shadow-xs: 0 1px 2px 0 rgba(30, 18, 13, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(30, 18, 13, 0.06), 0 1px 2px -1px rgba(30, 18, 13, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(30, 18, 13, 0.08), 0 2px 4px -2px rgba(30, 18, 13, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(30, 18, 13, 0.1), 0 4px 6px -4px rgba(30, 18, 13, 0.06);
+  --shadow-xl: 0 20px 25px -5px rgba(30, 18, 13, 0.12), 0 8px 10px -6px rgba(30, 18, 13, 0.06);
+  --shadow-2xl: 0 25px 50px -12px rgba(30, 18, 13, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(30, 18, 13, 0.06);
+  --shadow-glass: 0 8px 32px 0 rgba(30, 18, 13, 0.08);
+
+  /* --- Glassmorphism & Backdrop Filter Tokens --- */
+  --glass-bg: rgba(253, 251, 247, 0.85);
+  --glass-bg-card: rgba(255, 255, 255, 0.9);
+  --glass-bg-dark: rgba(30, 18, 13, 0.85);
+  --glass-border: rgba(230, 222, 214, 0.7);
+  --glass-blur: blur(12px);
+
+  /* --- Motion & Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* --- Layout Breakpoints (Max Container Widths) --- */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1400px;
+
+  /* --- Z-Index Layering --- */
+  --z-base: 0;
+  --z-card: 1;
+  --z-sticky: 100;
+  --z-drawer: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 310;
+  --z-toast: 400;
+  --z-tooltip: 500;
+}
