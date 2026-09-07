@@ -7,7 +7,8 @@ import Button from '../common/Button';
 import MacroPill from './MacroPill';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { catalogService } from '../../services/catalogService';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 /**
  * Reusable FitBite Product Card Component
@@ -15,6 +16,8 @@ import { catalogService } from '../../services/catalogService';
  */
 export const ProductCard = ({ product, onWishlistToggle = null }) => {
   const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
   const toast = useToast();
   const navigate = useNavigate();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -24,6 +27,7 @@ export const ProductCard = ({ product, onWishlistToggle = null }) => {
 
   if (!product) return null;
 
+  const inWishlist = isInWishlist(product.id);
   const isOutOfStock = product.stock_quantity <= 0;
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
   const hasDiscount =
@@ -50,12 +54,12 @@ export const ProductCard = ({ product, onWishlistToggle = null }) => {
 
     try {
       setIsAddingToCart(true);
-      await catalogService.addToCart(product.id, 1);
+      await addToCart(product.id, 1);
       setIsAdded(true);
       toast.success(`Added ${product.name} to your cart!`);
       setTimeout(() => setIsAdded(false), 2000);
     } catch (err) {
-      toast.error(err.message || 'Failed to add item to cart.');
+      // Toast handled by context
     } finally {
       setIsAddingToCart(false);
     }
@@ -73,11 +77,11 @@ export const ProductCard = ({ product, onWishlistToggle = null }) => {
 
     try {
       setIsWishlisting(true);
-      await catalogService.addToWishlist(product.id);
+      await addToWishlist(product.id);
       toast.success(`Saved ${product.name} to wishlist!`);
       if (onWishlistToggle) onWishlistToggle(product.id);
     } catch (err) {
-      toast.error(err.message || 'Failed to update wishlist.');
+      // Toast handled by context
     } finally {
       setIsWishlisting(false);
     }

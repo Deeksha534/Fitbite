@@ -27,6 +27,8 @@ import Card from '../../components/common/Card';
 import Spinner from '../../components/common/Spinner';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { catalogService } from '../../services/catalogService';
 
 /**
@@ -38,6 +40,8 @@ export const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
   const toast = useToast();
 
   const [product, setProduct] = useState(null);
@@ -120,10 +124,10 @@ export const ProductDetailPage = () => {
 
     try {
       setIsAddingToCart(true);
-      await catalogService.addToCart(product.id, quantity);
+      await addToCart(product.id, quantity);
       toast.success(`Added ${quantity} × ${product.name} to your cart!`);
     } catch (err) {
-      toast.error(err.message || 'Failed to add item to cart.');
+      // Toast handled by context
     } finally {
       setIsAddingToCart(false);
     }
@@ -138,10 +142,10 @@ export const ProductDetailPage = () => {
 
     try {
       setIsWishlisting(true);
-      await catalogService.addToWishlist(product.id);
+      await addToWishlist(product.id);
       toast.success(`Saved ${product.name} to wishlist!`);
     } catch (err) {
-      toast.error(err.message || 'Failed to update wishlist.');
+      // Toast handled by context
     } finally {
       setIsWishlisting(false);
     }
