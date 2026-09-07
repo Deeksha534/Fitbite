@@ -18,6 +18,9 @@ import SupportPage from './pages/public/SupportPage';
 import CartPage from './pages/cart/CartPage';
 import WishlistPage from './pages/wishlist/WishlistPage';
 import CheckoutPage from './pages/checkout/CheckoutPage';
+import TrackOrderPage from './pages/public/TrackOrderPage';
+import OrderHistoryPage from './pages/account/OrderHistoryPage';
+import OrderDetailPage from './pages/account/OrderDetailPage';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ProfilePage from './pages/account/ProfilePage';
@@ -49,17 +52,9 @@ export const App = () => {
                   <Route path="cart" element={<CartPage />} />
                   <Route path="wishlist" element={<WishlistPage />} />
 
-                  {/* Live 5-Stage Order Tracking (Phase 4E placeholder) */}
-                  <Route
-                    path="track"
-                    element={
-                      <PlaceholderPage
-                        title="Live 5-Stage Order Tracking"
-                        subtitle="Real-time timeline tracking: Placed -> Confirmed -> Packed -> Shipped -> Delivered."
-                        phase="4E"
-                      />
-                    }
-                  />
+                  {/* Live 5-Stage Order Tracking */}
+                  <Route path="track" element={<TrackOrderPage />} />
+                  <Route path="track/:orderNumber" element={<TrackOrderPage />} />
 
                   {/* Guest-Only Authentication Routes */}
                   <Route
@@ -92,11 +87,15 @@ export const App = () => {
                     path="account/orders"
                     element={
                       <ProtectedRoute>
-                        <PlaceholderPage
-                          title="My Order History & Invoices"
-                          subtitle="View past orders, track deliveries, download GST tax invoices, and re-order with ease."
-                          phase="4E"
-                        />
+                        <OrderHistoryPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="account/orders/:id"
+                    element={
+                      <ProtectedRoute>
+                        <OrderDetailPage />
                       </ProtectedRoute>
                     }
                   />
