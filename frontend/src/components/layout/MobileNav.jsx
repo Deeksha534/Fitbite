@@ -24,6 +24,16 @@ export const MobileNav = ({
     };
   }, [isOpen]);
 
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <>
       {/* 1. Mobile Drawer Backdrop & Menu */}
@@ -48,15 +58,33 @@ export const MobileNav = ({
             </div>
 
             {user ? (
-              <div className="drawer-user-card">
-                <div className="drawer-avatar">
-                  {user?.full_name ? user.full_name[0].toUpperCase() : 'U'}
+              <Link to="/account/profile" className="drawer-user-card-link" onClick={onClose}>
+                <div className="drawer-user-card">
+                  <div className="drawer-avatar">
+                    {user?.avatar_url ? (
+                      <img
+                        src={user.avatar_url}
+                        alt={user?.full_name || 'User'}
+                        className="drawer-avatar-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <span style={{ display: user?.avatar_url ? 'none' : 'flex' }}>
+                      {getInitials(user?.full_name)}
+                    </span>
+                  </div>
+                  <div className="drawer-user-details">
+                    <p className="drawer-name">{user?.full_name || 'FitBite Athlete'}</p>
+                    <p className="drawer-email">{user?.email}</p>
+                    {user?.role === 'admin' && (
+                      <span className="drawer-admin-badge">Administrator</span>
+                    )}
+                  </div>
                 </div>
-                <div className="drawer-user-details">
-                  <p className="drawer-name">{user?.full_name || 'Athlete'}</p>
-                  <p className="drawer-email">{user?.email}</p>
-                </div>
-              </div>
+              </Link>
             ) : (
               <div className="drawer-auth-buttons">
                 <Link to="/login" className="drawer-login-btn" onClick={onClose}>
@@ -305,6 +333,73 @@ export const MobileNav = ({
           border-radius: var(--radius-md);
         }
 
+        .drawer-user-card-link {
+          text-decoration: none;
+        }
+
+        .drawer-user-card {
+          display: flex;
+          align-items: center;
+          gap: var(--space-3);
+          padding: var(--space-3);
+          background: var(--color-cream-subtle);
+          border-radius: var(--radius-lg);
+          margin: var(--space-4) 0;
+          border: 1px solid var(--color-border);
+        }
+
+        .drawer-avatar {
+          width: 38px;
+          height: 38px;
+          border-radius: var(--radius-full);
+          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-amber) 100%);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.85rem;
+          font-weight: var(--font-weight-bold);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .drawer-avatar-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .drawer-user-details {
+          overflow: hidden;
+        }
+
+        .drawer-name {
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-bold);
+          color: var(--color-espresso);
+          line-height: 1.2;
+        }
+
+        .drawer-email {
+          font-size: var(--font-size-xs);
+          color: var(--color-text-subtle);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .drawer-admin-badge {
+          display: inline-block;
+          font-size: 0.6rem;
+          font-weight: var(--font-weight-bold);
+          text-transform: uppercase;
+          background: var(--color-espresso);
+          color: var(--color-cream);
+          padding: 1px 5px;
+          border-radius: var(--radius-xs);
+          margin-top: 2px;
+        }
+
         .drawer-auth-buttons {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -331,41 +426,6 @@ export const MobileNav = ({
           font-size: var(--font-size-xs);
           font-weight: var(--font-weight-semibold);
           color: #ffffff;
-        }
-
-        .drawer-user-card {
-          display: flex;
-          align-items: center;
-          gap: var(--space-3);
-          padding: var(--space-3);
-          background: var(--color-cream-subtle);
-          border-radius: var(--radius-lg);
-          margin: var(--space-4) 0;
-        }
-
-        .drawer-avatar {
-          width: 36px;
-          height: 36px;
-          border-radius: var(--radius-full);
-          background: var(--color-primary);
-          color: #ffffff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: var(--font-weight-bold);
-        }
-
-        .drawer-name {
-          font-size: var(--font-size-sm);
-          font-weight: var(--font-weight-bold);
-          color: var(--color-espresso);
-        }
-
-        .drawer-email {
-          font-size: var(--font-size-xs);
-          color: var(--color-text-subtle);
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
 
         .drawer-nav-list {

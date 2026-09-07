@@ -42,7 +42,20 @@ export const UserDropdown = ({ user, onLogout }) => {
         aria-label="User account menu"
       >
         <div className="user-avatar">
-          <span>{getInitials(user?.full_name)}</span>
+          {user?.avatar_url ? (
+            <img
+              src={user.avatar_url}
+              alt={user?.full_name || 'Avatar'}
+              className="user-avatar-img"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+          ) : null}
+          <span style={{ display: user?.avatar_url ? 'none' : 'block' }}>
+            {getInitials(user?.full_name)}
+          </span>
         </div>
         <span className="user-name-label">{user?.full_name?.split(' ')[0] || 'Account'}</span>
         <ChevronDown size={14} className={`dropdown-chevron ${isOpen ? 'is-open' : ''}`} />
@@ -67,7 +80,7 @@ export const UserDropdown = ({ user, onLogout }) => {
               onClick={() => setIsOpen(false)}
             >
               <User size={16} />
-              <span>My Profile & Addresses</span>
+              <span>My Profile & Account</span>
             </Link>
 
             <Link
@@ -148,6 +161,14 @@ export const UserDropdown = ({ user, onLogout }) => {
           justify-content: center;
           font-size: 0.75rem;
           font-weight: var(--font-weight-bold);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .user-avatar-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .user-name-label {

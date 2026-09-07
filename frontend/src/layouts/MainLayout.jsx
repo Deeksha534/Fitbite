@@ -5,7 +5,7 @@ import Navbar from '../components/layout/Navbar';
 import MobileNav from '../components/layout/MobileNav';
 import Footer from '../components/layout/Footer';
 import { api } from '../services/api';
-import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * FitBite Primary Application Layout
@@ -13,13 +13,13 @@ import { useToast } from '../context/ToastContext';
  */
 export const MainLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [apiOnline, setApiOnline] = useState(true);
-  const toast = useToast();
 
-  // 1. Initial Health Check & User State
+  const { user, logout } = useAuth();
+
+  // 1. Initial Health Check
   useEffect(() => {
     const checkBackendHealth = async () => {
       try {
@@ -35,21 +35,7 @@ export const MainLayout = () => {
 
     checkBackendHealth();
 
-    // Check stored user in localStorage
-    try {
-      const storedUser = localStorage.getItem('fitbite_user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (e) {
-      console.error('Error reading user from storage:', e);
-    }
-
-    // Listen to custom auth & cart events
-    const handleAuthChange = (event) => {
-      setUser(event.detail?.user || null);
-    };
-
+    // Listen to custom cart & wishlist events
     const handleCartChange = (event) => {
       setCartCount(event.detail?.count || 0);
     };
@@ -58,31 +44,14 @@ export const MainLayout = () => {
       setWishlistCount(event.detail?.count || 0);
     };
 
-    const handleSessionExpired = () => {
-      setUser(null);
-      toast.info('Your session has expired. Please sign in again.');
-    };
-
-    window.addEventListener('fitbite:auth_changed', handleAuthChange);
     window.addEventListener('fitbite:cart_changed', handleCartChange);
     window.addEventListener('fitbite:wishlist_changed', handleWishlistChange);
-    window.addEventListener('fitbite:session_expired', handleSessionExpired);
 
     return () => {
-      window.removeEventListener('fitbite:auth_changed', handleAuthChange);
       window.removeEventListener('fitbite:cart_changed', handleCartChange);
       window.removeEventListener('fitbite:wishlist_changed', handleWishlistChange);
-      window.removeEventListener('fitbite:session_expired', handleSessionExpired);
     };
-  }, [toast]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('fitbite_token');
-    localStorage.removeItem('fitbite_user');
-    setUser(null);
-    toast.success('Signed out successfully');
-    window.dispatchEvent(new CustomEvent('fitbite:auth_changed', { detail: { user: null } }));
-  };
+  }, []);
 
   return (
     <div className="fitbite-app-shell">
@@ -100,7 +69,7 @@ export const MainLayout = () => {
         user={user}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
-        onLogout={handleLogout}
+        onLogout={logout}
         onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
       />
 
@@ -111,7 +80,7 @@ export const MainLayout = () => {
         user={user}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
-        onLogout={handleLogout}
+        onLogout={logout}
       />
 
       {/* Main Dynamic Viewport */}
